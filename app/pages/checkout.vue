@@ -281,7 +281,7 @@ const handleSubmit = async () => {
     console.log('📦 Submitting order:', orderData)
 
     // Submit order via the ecommerce-order endpoint (using full URL)
-    const response = await $fetch('https://business.mwendavano.com/whatsapp/ecommerce-order', {
+    const response = await $fetch('https://business.mwendavano.com/api/whatsapp/ecommerce-order', {
       method: 'POST',
       body: orderData,
       headers: {
