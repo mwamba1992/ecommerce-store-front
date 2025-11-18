@@ -9,32 +9,33 @@
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 relative">
         <div class="text-center">
           <!-- Premium Logo Display -->
-          <div class="mb-8 animate-fade-in">
+          <div class="mb-6 sm:mb-8 animate-fade-in">
             <div class="relative inline-block">
-              <h1 class="text-6xl md:text-8xl font-black text-white lowercase mb-3" style="font-family: 'Arial Black', Arial, sans-serif; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(234, 179, 8, 0.3);">
+              <!-- Crown positioned above 'g' -->
+              <svg class="w-8 h-6 sm:w-10 sm:h-8 md:w-14 md:h-10 lg:w-16 lg:h-12 text-yellow-400 absolute -top-5 sm:-top-7 md:-top-9 lg:-top-11 left-0 drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]" fill="currentColor" viewBox="0 0 640 512">
+                <path d="M528 448H112c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm64-320c-26.5 0-48 21.5-48 48 0 7.1 1.6 13.7 4.4 19.8L476 239.2c-15.4 9.2-35.3 4-44.2-11.6L350.3 85C361 76.2 368 63 368 48c0-26.5-21.5-48-48-48s-48 21.5-48 48c0 15 7 28.2 17.7 37l-81.5 142.6c-8.9 15.6-28.9 20.8-44.2 11.6l-72.3-43.4c2.7-6 4.4-12.7 4.4-19.8 0-26.5-21.5-48-48-48S0 149.5 0 176s21.5 48 48 48c2.6 0 5.2-.4 7.7-.8L128 416h384l72.3-192.8c2.5.4 5.1.8 7.7.8 26.5 0 48-21.5 48-48s-21.5-48-48-48z"/>
+              </svg>
+              <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white lowercase mb-2 sm:mb-3" style="font-family: 'Arial Black', Arial, sans-serif; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(234, 179, 8, 0.3);">
                 global
               </h1>
-              <svg class="w-10 h-10 md:w-14 md:h-14 text-yellow-400 absolute -top-3 -right-8 md:-right-12 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
             </div>
-            <h2 class="text-3xl md:text-5xl font-black text-yellow-400 uppercase tracking-[0.4em] mb-6" style="font-family: Arial, sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-yellow-400 uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-4 sm:mb-6" style="font-family: Arial, sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
               Authentic TZ
             </h2>
-            <div class="w-24 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-6"></div>
+            <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-4 sm:mb-6"></div>
           </div>
 
           <!-- Tagline -->
-          <p class="text-xl md:text-3xl mb-10 text-gray-200 font-light tracking-wide max-w-3xl mx-auto">
+          <p class="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 sm:mb-10 text-gray-200 font-light tracking-wide max-w-3xl mx-auto px-4">
             TRUE GLOBAL GOODS, RIGHT HERE IN TZ
           </p>
 
           <!-- CTA Buttons -->
-          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <NuxtLink to="/products" class="group relative inline-flex items-center justify-center px-10 py-4 bg-yellow-400 text-black font-bold rounded-lg overflow-hidden transition-all duration-300 hover:bg-yellow-500 hover:scale-105 shadow-[0_0_30px_rgba(234,179,8,0.3)] hover:shadow-[0_0_40px_rgba(234,179,8,0.5)]">
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
+            <NuxtLink to="/products" class="w-full sm:w-auto group relative inline-flex items-center justify-center px-8 sm:px-10 py-3 sm:py-4 bg-yellow-400 text-black font-bold rounded-lg overflow-hidden transition-all duration-300 hover:bg-yellow-500 hover:scale-105 shadow-[0_0_30px_rgba(234,179,8,0.3)] hover:shadow-[0_0_40px_rgba(234,179,8,0.5)]">
               <span class="relative z-10 flex items-center">
                 Shop Now
                 <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,13 +43,13 @@
                 </svg>
               </span>
             </NuxtLink>
-            <NuxtLink to="/about" class="inline-flex items-center px-10 py-4 border-2 border-yellow-400 text-yellow-400 font-bold rounded-lg hover:bg-yellow-400 hover:text-black transition-all duration-300">
+            <NuxtLink to="/about" class="w-full sm:w-auto inline-flex items-center justify-center px-8 sm:px-10 py-3 sm:py-4 border-2 border-yellow-400 text-yellow-400 font-bold rounded-lg hover:bg-yellow-400 hover:text-black transition-all duration-300">
               Learn More
             </NuxtLink>
           </div>
 
           <!-- Trust Badges -->
-          <div class="mt-12 flex flex-wrap justify-center gap-8 text-sm text-gray-400">
+          <div class="mt-8 sm:mt-12 flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm text-gray-400 px-4">
             <div class="flex items-center space-x-2">
               <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -74,28 +75,28 @@
     </section>
 
     <!-- Featured Products -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
+      <div class="text-center mb-8 sm:mb-12">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 sm:mb-4">
           Featured <span class="text-yellow-500">Products</span>
         </h2>
-        <p class="text-gray-600 text-lg max-w-2xl mx-auto mb-6">
+        <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
           Discover our carefully curated selection of authentic international products
         </p>
-        <div class="w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
+        <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
       </div>
 
-      <div class="flex justify-end mb-6">
-        <NuxtLink to="/products" class="inline-flex items-center px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-yellow-500 hover:text-black transition-all duration-300 shadow-lg">
+      <div class="flex justify-center sm:justify-end mb-6">
+        <NuxtLink to="/products" class="inline-flex items-center px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-900 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-yellow-500 hover:text-black transition-all duration-300 shadow-lg">
           View All Products
-          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
         </NuxtLink>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         <div v-for="n in 8" :key="n" class="card animate-pulse">
           <div class="bg-gray-200 h-48"></div>
           <div class="p-4 space-y-3">
@@ -106,7 +107,7 @@
       </div>
 
       <!-- Products Grid -->
-      <div v-else-if="products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div v-else-if="products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         <ProductCard v-for="product in products" :key="product.id" :product="product" />
       </div>
 
@@ -121,10 +122,10 @@
     </section>
 
     <!-- Categories Section -->
-    <section class="bg-gray-50 py-16">
+    <section class="bg-gray-50 py-12 sm:py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Shop by Category</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Shop by Category</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           <NuxtLink
             v-for="category in categories"
             :key="category.id"
@@ -140,8 +141,8 @@
     </section>
 
     <!-- Features Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
         <div class="text-center">
           <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
