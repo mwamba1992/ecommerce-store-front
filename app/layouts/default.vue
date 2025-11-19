@@ -32,8 +32,100 @@
             </NuxtLink>
           </nav>
 
-          <!-- Right Side: Cart & Mobile Menu Button -->
+          <!-- Search Bar (Desktop) -->
+          <div class="hidden lg:flex items-center flex-1 max-w-md mx-4">
+            <div class="relative w-full">
+              <input
+                v-model="searchQuery"
+                @input="handleSearch"
+                @focus="showSearchResults = true"
+                type="text"
+                placeholder="Search products..."
+                class="w-full px-4 py-2 pl-10 bg-white/10 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+              />
+              <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+
+              <!-- Search Results Dropdown -->
+              <div
+                v-if="showSearchResults && searchQuery.length > 0"
+                v-click-outside="closeSearch"
+                class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl max-h-96 overflow-y-auto z-50"
+              >
+                <!-- Loading -->
+                <div v-if="searchLoading" class="p-4 text-center text-gray-500">
+                  Searching...
+                </div>
+
+                <!-- Results -->
+                <div v-else-if="searchResults.length > 0" class="py-2">
+                  <NuxtLink
+                    v-for="product in searchResults"
+                    :key="product.id"
+                    :to="`/products/${product.id}`"
+                    @click="closeSearch"
+                    class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  >
+                    <img
+                      v-if="product.imageUrl"
+                      :src="getImageUrl(product.imageUrl)"
+                      :alt="product.name"
+                      class="w-12 h-12 object-contain rounded"
+                    />
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-gray-900 truncate">{{ product.name }}</p>
+                      <p class="text-sm text-yellow-600 font-bold">TZS {{ formatPrice(product.sellingPrice) }}</p>
+                    </div>
+                  </NuxtLink>
+                  <NuxtLink
+                    to="/products"
+                    @click="closeSearch"
+                    class="block px-4 py-3 text-center text-sm text-yellow-600 hover:bg-gray-50 font-semibold border-t"
+                  >
+                    View all results
+                  </NuxtLink>
+                </div>
+
+                <!-- No Results -->
+                <div v-else class="p-4 text-center text-gray-500">
+                  No products found
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Side: Account, Wishlist, Cart & Mobile Menu Button -->
           <div class="flex items-center space-x-2 md:space-x-4">
+            <!-- Account Icon (Desktop) -->
+            <NuxtLink
+              v-if="authStore.isAuthenticated"
+              to="/account"
+              class="hidden md:block p-2 md:p-3 text-white hover:text-yellow-400 transition-colors bg-white/10 rounded-lg hover:bg-white/20"
+              title="My Account"
+            >
+              <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </NuxtLink>
+            <NuxtLink
+              v-else
+              to="/login"
+              class="hidden md:block px-4 py-2 text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
+            >
+              Login
+            </NuxtLink>
+
+            <!-- Wishlist Icon -->
+            <NuxtLink to="/wishlist" class="relative p-2 md:p-3 transition-colors bg-white/10 rounded-lg hover:bg-white/20 group" :class="wishlistStore.totalItems > 0 ? 'text-yellow-400' : 'text-white hover:text-yellow-400'" title="Wishlist">
+              <svg class="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110" :fill="wishlistStore.totalItems > 0 ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span v-if="wishlistStore.totalItems > 0" class="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                {{ wishlistStore.totalItems }}
+              </span>
+            </NuxtLink>
+
             <!-- Cart Icon -->
             <NuxtLink to="/cart" class="relative p-2 md:p-3 text-white hover:text-yellow-400 transition-colors bg-white/10 rounded-lg hover:bg-white/20">
               <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,6 +162,26 @@
             </NuxtLink>
             <NuxtLink @click="mobileMenuOpen = false" to="/about" class="px-4 py-3 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
               About
+            </NuxtLink>
+            <div class="border-t border-gray-800 my-2"></div>
+            <NuxtLink
+              v-if="authStore.isAuthenticated"
+              @click="mobileMenuOpen = false"
+              to="/account"
+              class="px-4 py-3 text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200 flex items-center"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              My Account
+            </NuxtLink>
+            <NuxtLink
+              v-else
+              @click="mobileMenuOpen = false"
+              to="/login"
+              class="px-4 py-3 text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200"
+            >
+              Login / Register
             </NuxtLink>
           </nav>
         </div>
@@ -180,12 +292,93 @@
 
 <script setup>
 import { useCartStore } from '~/stores/cart'
+import { useAuthStore } from '~/stores/auth'
+import { useWishlistStore } from '~/stores/wishlist'
 
 const cartStore = useCartStore()
+const authStore = useAuthStore()
+const wishlistStore = useWishlistStore()
 const mobileMenuOpen = ref(false)
 
-// Load cart from localStorage on mount
+// Search functionality
+const { getProductsWithPricing } = useProducts()
+const { baseURL } = useApi()
+const searchQuery = ref('')
+const searchResults = ref([])
+const showSearchResults = ref(false)
+const searchLoading = ref(false)
+let searchTimeout = null
+
+const handleSearch = async () => {
+  if (searchQuery.value.length === 0) {
+    searchResults.value = []
+    return
+  }
+
+  searchLoading.value = true
+
+  // Debounce search
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(async () => {
+    try {
+      const allProducts = await getProductsWithPricing()
+      const query = searchQuery.value.toLowerCase()
+      searchResults.value = allProducts
+        .filter(product =>
+          product.name.toLowerCase().includes(query) ||
+          (product.code && product.code.toLowerCase().includes(query)) ||
+          (product.desc && product.desc.toLowerCase().includes(query))
+        )
+        .slice(0, 5) // Show only first 5 results
+    } catch (error) {
+      console.error('Search error:', error)
+      searchResults.value = []
+    } finally {
+      searchLoading.value = false
+    }
+  }, 300)
+}
+
+const closeSearch = () => {
+  showSearchResults.value = false
+  searchQuery.value = ''
+  searchResults.value = []
+}
+
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return ''
+  if (imageUrl.startsWith('http')) {
+    if (imageUrl.includes('cloudinary.com')) {
+      return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_pad,b_white/')
+    }
+    return imageUrl
+  }
+  return `${baseURL}${imageUrl}`
+}
+
+const formatPrice = (price) => {
+  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
+}
+
+// Click outside directive
+const vClickOutside = {
+  mounted(el, binding) {
+    el.clickOutsideEvent = (event) => {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value()
+      }
+    }
+    document.addEventListener('click', el.clickOutsideEvent)
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el.clickOutsideEvent)
+  }
+}
+
+// Load cart, auth, and wishlist from localStorage on mount
 onMounted(() => {
   cartStore.loadFromLocalStorage()
+  authStore.initAuth()
+  wishlistStore.loadFromLocalStorage()
 })
 </script>

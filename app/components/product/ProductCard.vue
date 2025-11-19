@@ -1,5 +1,17 @@
 <template>
   <div class="group relative">
+    <!-- Wishlist Heart Button -->
+    <button
+      @click.prevent="toggleWishlist"
+      class="absolute top-2 right-2 z-30 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
+      :class="isInWishlist ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'"
+      title="Add to wishlist"
+    >
+      <svg class="w-6 h-6" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    </button>
+
     <NuxtLink :to="`/products/${product.id}`" class="block">
       <!-- Decorative corner accent -->
       <div class="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
@@ -23,17 +35,49 @@
             </svg>
           </div>
 
-          <!-- Status Badge - Only show if critical -->
-          <div v-if="product.condition === 'used' || !product.inStock" class="absolute top-3 left-3 z-20">
+          <!-- Badges Container -->
+          <div class="absolute top-3 left-3 z-20 flex flex-col gap-2">
+            <!-- Out of Stock Badge (Highest Priority) -->
             <span
-              :class="[
-                'text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm',
-                product.condition === 'used'
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-red-500 text-white'
-              ]"
+              v-if="!product.inStock"
+              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-red-500 text-white"
             >
-              {{ product.condition === 'used' ? 'USED' : 'OUT OF STOCK' }}
+              OUT OF STOCK
+            </span>
+
+            <!-- Condition Badge -->
+            <span
+              v-else-if="product.condition === 'used'"
+              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-orange-500 text-white"
+            >
+              USED
+            </span>
+
+            <!-- New Badge -->
+            <span
+              v-else-if="product.condition === 'new' && isNewProduct"
+              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-green-500 text-white"
+            >
+              NEW
+            </span>
+          </div>
+
+          <!-- Top Right Badges (Featured, Best Seller) -->
+          <div class="absolute top-3 right-14 z-20 flex flex-col gap-2 items-end">
+            <!-- Featured Badge -->
+            <span
+              v-if="product.featured"
+              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-purple-500 text-white"
+            >
+              FEATURED
+            </span>
+
+            <!-- Best Seller Badge (based on some criteria, e.g., quantity sold) -->
+            <span
+              v-if="isBestSeller"
+              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-yellow-500 text-black"
+            >
+              BEST SELLER
             </span>
           </div>
 
@@ -73,6 +117,8 @@
 </template>
 
 <script setup>
+import { useWishlistStore } from '~/stores/wishlist'
+
 const props = defineProps({
   product: {
     type: Object,
@@ -81,6 +127,33 @@ const props = defineProps({
 })
 
 const { baseURL } = useApi()
+const wishlistStore = useWishlistStore()
+
+// Check if product is in wishlist
+const isInWishlist = computed(() => wishlistStore.isInWishlist(props.product.id))
+
+// Toggle wishlist
+const toggleWishlist = () => {
+  wishlistStore.toggleWishlist(props.product)
+}
+
+// Check if product is new (created within last 30 days)
+const isNewProduct = computed(() => {
+  if (!props.product.createdAt) return false
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  return new Date(props.product.createdAt) > thirtyDaysAgo
+})
+
+// Check if product is a best seller (you can adjust the criteria)
+// For now, let's use a simple heuristic: if it has high sales or is marked as popular
+const isBestSeller = computed(() => {
+  // You can add your own logic here, e.g.:
+  // - Check if product.quantitySold > threshold
+  // - Check if product.popular === true
+  // - Check if product.rating > 4.5
+  return props.product.popular || (props.product.quantitySold && props.product.quantitySold > 50)
+})
 
 const getImageUrl = (imageUrl) => {
   if (!imageUrl) return ''

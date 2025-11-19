@@ -227,8 +227,10 @@
 
 <script setup>
 import { useCartStore } from '~/stores/cart'
+import { useAuthStore } from '~/stores/auth'
 
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 const router = useRouter()
 
 const isProcessing = ref(false)
@@ -242,6 +244,20 @@ const formData = reactive({
   region: '',
   notes: '',
   paymentMethod: 'cod'
+})
+
+// Prefill form with customer data if logged in
+onMounted(() => {
+  authStore.initAuth()
+
+  if (authStore.isAuthenticated && authStore.customer) {
+    const customer = authStore.customer
+    formData.name = customer.name || ''
+    formData.phone = customer.phone || ''
+    formData.email = customer.email || ''
+    formData.city = customer.city || ''
+    formData.region = customer.region || ''
+  }
 })
 
 const formatPrice = (price) => {
@@ -291,10 +307,33 @@ const handleSubmit = async () => {
 
     console.log('✅ Order created successfully:', response)
 
-    // Clear cart and show success
+    // Clear cart
     cartStore.clearCart()
+
+    // Show success message
     alert(`Order placed successfully!\n\nOrder confirmation sent to our team.\n\nWe will contact you at ${formData.phone} to confirm your order.\n\nThank you for shopping with Global Authentic TZ!`)
-    router.push('/products')
+
+    // Prompt guest customers to create an account
+    if (!authStore.isAuthenticated) {
+      const createAccount = confirm(
+        `Would you like to create an account to track your orders?\n\n` +
+        `With an account, you can:\n` +
+        `✓ View all your order history\n` +
+        `✓ Track order status\n` +
+        `✓ Faster checkout next time\n\n` +
+        `Click OK to set your password now.`
+      )
+
+      if (createAccount) {
+        // Save phone number and redirect to set-password page
+        router.push(`/set-password?phone=${encodeURIComponent(formData.phone)}`)
+      } else {
+        router.push('/products')
+      }
+    } else {
+      // Already logged in, redirect to account page
+      router.push('/account')
+    }
 
   } catch (error) {
     console.error('❌ Order submission error:', error)

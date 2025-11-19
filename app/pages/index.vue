@@ -74,6 +74,73 @@
       </div>
     </section>
 
+    <!-- Promotional Banner Section -->
+    <section class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 py-8 sm:py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <!-- Left Side - Text Content -->
+          <div class="text-center md:text-left flex-1">
+            <div class="inline-block bg-black text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3">
+              LIMITED TIME OFFER
+            </div>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-black mb-2">
+              Get Up to 30% OFF
+            </h2>
+            <p class="text-base sm:text-lg text-black/80 font-semibold mb-4">
+              On Selected International Brands
+            </p>
+            <NuxtLink
+              to="/products"
+              class="inline-flex items-center px-6 py-3 bg-black text-yellow-400 font-bold rounded-lg hover:bg-gray-900 transition-all duration-300 shadow-lg"
+            >
+              Shop Sale Items
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </NuxtLink>
+          </div>
+
+          <!-- Right Side - Decorative Elements -->
+          <div class="hidden md:flex items-center gap-4">
+            <div class="bg-black/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+              <div class="text-4xl font-black text-black mb-1">30%</div>
+              <div class="text-sm font-bold text-black/80">MAX DISCOUNT</div>
+            </div>
+            <div class="bg-black/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+              <div class="text-4xl font-black text-black mb-1">100+</div>
+              <div class="text-sm font-bold text-black/80">PRODUCTS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Special Deals Banner -->
+    <section class="bg-gray-100 py-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm sm:text-base">
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+            </svg>
+            <span class="font-semibold">Flash Sales Daily</span>
+          </div>
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
+            </svg>
+            <span class="font-semibold">New Arrivals Weekly</span>
+          </div>
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+            </svg>
+            <span class="font-semibold">Same Day Delivery</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Featured Products -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
       <div class="text-center mb-8 sm:mb-12">
