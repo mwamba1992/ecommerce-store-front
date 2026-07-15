@@ -236,30 +236,38 @@ const { getProductsWithPricing } = useProducts()
 const { baseURL } = useApi()
 const cartStore = useCartStore()
 
-const product = ref(null)
-const relatedProducts = ref([])
-const loading = ref(true)
 const quantity = ref(1)
 
-// Fetch product details with pricing and inventory
-onMounted(async () => {
-  try {
-    const products = await getProductsWithPricing()
-    const productId = parseInt(route.params.id)
-    product.value = products.find(p => p.id === productId)
+// Fetched on the server so the name, price and description reach search engines
+// in the HTML itself. Only the returned { product, related } is serialised into
+// the page — the rest of the catalogue is discarded server-side.
+const { data, pending: loading } = await useAsyncData(
+  `product-${route.params.id}`,
+  async () => {
+    const all = await getProductsWithPricing()
+    const product = all.find(p => p.id === Number(route.params.id)) ?? null
 
-    // Get related products (same category, exclude current product)
-    if (product.value?.category) {
-      relatedProducts.value = products
-        .filter(p => p.category?.id === product.value.category.id && p.id !== product.value.id)
-        .slice(0, 4)
-    }
-  } catch (error) {
-    console.error('Error loading product:', error)
-  } finally {
-    loading.value = false
-  }
-})
+    const related = product
+      ? all
+          .filter(p => p.category?.id === product.category?.id && p.id !== product.id)
+          .slice(0, 4)
+      : []
+
+    return { product, related }
+  },
+  { watch: [() => route.params.id] }
+)
+
+const product = computed(() => data.value?.product ?? null)
+const relatedProducts = computed(() => data.value?.related ?? [])
+
+// Answer a real 404 for a product that doesn't exist. Rendering the not-found
+// state with a 200 is a "soft 404": it keeps dead URLs in the search index and
+// competes with the pages that should rank. The custom UI below still shows.
+if (!product.value) {
+  const event = useRequestEvent()
+  if (event) setResponseStatus(event, 404)
+}
 
 const getImageUrl = (imageUrl) => {
   if (!imageUrl) return ''

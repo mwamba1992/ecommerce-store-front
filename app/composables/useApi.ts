@@ -4,22 +4,24 @@ export const useApi = () => {
 
   const apiFetch = async (url: string, options: any = {}) => {
     const fullUrl = `${baseURL}${url}`
-    console.log('🌐 [API] Calling:', fullUrl)
-    console.log('📤 [API] Options:', options)
+
+    // Dev-only: these calls now also run during server-side rendering, where
+    // logging every response would dump the whole catalogue into the server log
+    // on each page view.
+    if (import.meta.dev) {
+      console.log('🌐 [API] Calling:', fullUrl)
+    }
+
     try {
-      const response = await $fetch(fullUrl, {
+      return await $fetch(fullUrl, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,
         },
       })
-      console.log('✅ [API] Response received:', response)
-      return response
     } catch (error: any) {
-      console.error('❌ [API] Error:', error)
-      console.error('❌ [API] URL:', fullUrl)
-      console.error('❌ [API] Error details:', error.message, error.statusCode)
+      console.error('❌ [API] Error:', fullUrl, error.statusCode, error.message)
       throw error
     }
   }

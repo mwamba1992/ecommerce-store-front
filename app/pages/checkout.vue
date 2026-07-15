@@ -276,7 +276,9 @@ const handleSubmit = async () => {
   try {
     const { apiFetch } = useApi()
 
-    // Prepare order data for the ecommerce-order endpoint
+    // Prepare order data for the ecommerce-order endpoint.
+    // Prices are deliberately not sent: the server charges the catalogue price
+    // for each itemId, so the cart total shown above is indicative only.
     const orderData = {
       customerName: formData.name,
       customerPhone: formData.phone,
@@ -286,26 +288,17 @@ const handleSubmit = async () => {
       warehouseId: 1, // Default warehouse
       items: cartStore.items.map(item => ({
         itemId: item.id,
-        quantity: item.quantity,
-        unitPrice: item.price
+        quantity: item.quantity
       })),
       deliveryAddress: formData.address,
       notes: formData.notes || '',
       paymentMethod: formData.paymentMethod === 'cod' ? 'cash_on_delivery' : 'mobile_money'
     }
 
-    console.log('📦 Submitting order:', orderData)
-
-    // Submit order via the ecommerce-order endpoint (using full URL)
-    const response = await $fetch('https://business.mwendavano.com/api/whatsapp/ecommerce-order', {
+    const response = await apiFetch('/whatsapp/ecommerce-order', {
       method: 'POST',
-      body: orderData,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      body: orderData
     })
-
-    console.log('✅ Order created successfully:', response)
 
     // Clear cart
     cartStore.clearCart()

@@ -192,10 +192,26 @@
 const { getProductsWithPricing } = useProducts()
 const { apiFetch } = useApi()
 
-const products = ref([])
-const categories = ref([])
-const brands = ref([])
-const loading = ref(true)
+// Fetched on the server so the catalogue is present in the HTML that search
+// engines receive — they do not reliably execute client-side JavaScript.
+// Filtering and sorting below stay in the browser and work off this data.
+const { data: products, pending: loading } = await useAsyncData(
+  'products-list',
+  () => getProductsWithPricing(),
+  { default: () => [] }
+)
+
+const { data: categories } = await useAsyncData(
+  'products-categories',
+  () => apiFetch('/common/type/ITEM_CATEGORY'),
+  { default: () => [] }
+)
+
+const { data: brands } = await useAsyncData(
+  'products-brands',
+  () => apiFetch('/brands'),
+  { default: () => [] }
+)
 
 const searchQuery = ref('')
 const selectedCategory = ref('')
@@ -205,21 +221,6 @@ const minPrice = ref(null)
 const maxPrice = ref(null)
 const inStockOnly = ref(false)
 const sortBy = ref('featured')
-
-// Fetch data
-onMounted(async () => {
-  try {
-    [products.value, categories.value, brands.value] = await Promise.all([
-      getProductsWithPricing(),
-      apiFetch('/common/type/ITEM_CATEGORY'),
-      apiFetch('/brands')
-    ])
-  } catch (error) {
-    console.error('Error loading products:', error)
-  } finally {
-    loading.value = false
-  }
-})
 
 // Filtered products
 const filteredProducts = computed(() => {
