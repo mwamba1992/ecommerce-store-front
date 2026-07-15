@@ -9,10 +9,10 @@
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16 relative">
         <div class="text-center">
           <!-- Premium Logo Display -->
-          <div class="mb-6 sm:mb-8 animate-fade-in">
+          <div class="mb-4 sm:mb-6 animate-fade-in">
             <div class="relative inline-block">
               <!-- Crown positioned above 'g' -->
               <svg class="w-8 h-6 sm:w-10 sm:h-8 md:w-14 md:h-10 lg:w-16 lg:h-12 text-yellow-400 absolute -top-5 sm:-top-7 md:-top-9 lg:-top-11 left-0 drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]" fill="currentColor" viewBox="0 0 640 512">
@@ -29,7 +29,7 @@
           </div>
 
           <!-- Tagline -->
-          <p class="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 sm:mb-10 text-gray-200 font-light tracking-wide max-w-3xl mx-auto px-4">
+          <p class="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 text-gray-200 font-light tracking-wide max-w-3xl mx-auto px-4">
             TRUE GLOBAL GOODS, RIGHT HERE IN TZ
           </p>
 
@@ -49,7 +49,7 @@
           </div>
 
           <!-- Trust Badges -->
-          <div class="mt-8 sm:mt-12 flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm text-gray-400 px-4">
+          <div class="mt-6 sm:mt-8 flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm text-gray-300 px-4">
             <div class="flex items-center space-x-2">
               <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -142,24 +142,15 @@
     </section>
 
     <!-- Featured Products -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
-      <div class="text-center mb-8 sm:mb-12">
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 sm:mb-4">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16">
+      <div class="text-center mb-8 sm:mb-10">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3">
           Featured <span class="text-yellow-500">Products</span>
         </h2>
-        <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
+        <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto mb-4 px-4">
           Discover our carefully curated selection of authentic international products
         </p>
         <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
-      </div>
-
-      <div class="flex justify-center sm:justify-end mb-6">
-        <NuxtLink to="/products" class="inline-flex items-center px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-900 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-yellow-500 hover:text-black transition-all duration-300 shadow-lg">
-          View All Products
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-        </NuxtLink>
       </div>
 
       <!-- Loading State -->
@@ -174,9 +165,21 @@
       </div>
 
       <!-- Products Grid -->
-      <div v-else-if="products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-        <ProductCard v-for="product in products" :key="product.id" :product="product" />
-      </div>
+      <template v-else-if="products.length > 0">
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          <ProductCard v-for="product in products" :key="product.id" :product="product" />
+        </div>
+
+        <!-- View All (below grid, centered) -->
+        <div class="flex justify-center mt-10 sm:mt-12">
+          <NuxtLink to="/products" class="inline-flex items-center px-8 py-3.5 bg-gray-900 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-yellow-400 hover:text-black transition-all duration-300 shadow-lg">
+            View All Products
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </NuxtLink>
+        </div>
+      </template>
 
       <!-- Empty State -->
       <div v-else class="text-center py-16">
@@ -248,32 +251,21 @@
 const { getProductsWithPricing } = useProducts()
 const { apiFetch } = useApi()
 
-const products = ref([])
-const categories = ref([])
-const loading = ref(true)
+// Server-rendered: fetched on the server for fast first paint + SEO
+const { data: allProducts, pending: loading } = await useAsyncData(
+  'home-products',
+  () => getProductsWithPricing(),
+  { default: () => [] }
+)
 
-onMounted(async () => {
-  console.log('🚀 [Homepage] Starting to fetch data...')
-  try {
-    // Fetch featured products with pricing and inventory (limit to 8)
-    console.log('📦 [Homepage] Fetching products with pricing and inventory...')
-    const allProducts = await getProductsWithPricing()
-    console.log('✅ [Homepage] Products fetched:', allProducts.length, 'items')
-    console.log('📊 [Homepage] Products data:', allProducts)
-    products.value = allProducts.slice(0, 8)
+const { data: categoriesData } = await useAsyncData(
+  'home-categories',
+  () => apiFetch('/common/type/ITEM_CATEGORY'),
+  { default: () => [] }
+)
 
-    // Fetch categories
-    console.log('🏷️ [Homepage] Fetching categories...')
-    categories.value = await apiFetch('/common/type/ITEM_CATEGORY')
-    console.log('✅ [Homepage] Categories fetched:', categories.value.length, 'categories')
-    console.log('📊 [Homepage] Categories data:', categories.value)
-  } catch (error) {
-    console.error('❌ [Homepage] Error loading data:', error)
-  } finally {
-    loading.value = false
-    console.log('🏁 [Homepage] Loading complete. Products:', products.value.length, 'Categories:', categories.value.length)
-  }
-})
+const products = computed(() => allProducts.value.slice(0, 8))
+const categories = computed(() => categoriesData.value)
 
 useHead({
   title: 'Home - Global Authentic TZ | True Global Goods',

@@ -1,123 +1,97 @@
 <template>
-  <div class="group relative">
+  <div class="group relative flex flex-col bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
     <!-- Wishlist Heart Button -->
     <button
       @click.prevent="toggleWishlist"
-      class="absolute top-2 right-2 z-30 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
-      :class="isInWishlist ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'"
-      title="Add to wishlist"
+      class="absolute top-2.5 right-2.5 z-30 w-9 h-9 rounded-full bg-white shadow-sm ring-1 ring-gray-200 flex items-center justify-center hover:ring-gray-300 transition-all duration-200"
+      :class="isInWishlist ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
+      :aria-label="isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'"
     >
-      <svg class="w-6 h-6" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-5 h-5" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
       </svg>
     </button>
 
-    <NuxtLink :to="`/products/${product.id}`" class="block">
-      <!-- Decorative corner accent -->
-      <div class="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+    <!-- Single Priority Badge (top-left) -->
+    <div class="absolute top-2.5 left-2.5 z-20">
+      <span v-if="badge" class="text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm tracking-wide" :class="badge.class">
+        {{ badge.label }}
+      </span>
+    </div>
 
-      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent group-hover:border-yellow-400 relative">
-        <!-- Product Image -->
-        <div class="relative h-48 sm:h-56 md:h-64 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden flex items-center justify-center">
-          <!-- Subtle pattern overlay -->
-          <div class="absolute inset-0 opacity-[0.02]" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
+    <!-- Product Image -->
+    <NuxtLink :to="`/products/${product.id}`" class="block relative aspect-square bg-gray-50 overflow-hidden">
+      <img
+        v-if="product.imageUrl && !imageFailed"
+        :src="getImageUrl(product.imageUrl)"
+        :alt="product.name"
+        loading="lazy"
+        @error="imageFailed = true"
+        class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+      />
+      <div v-else class="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-2">
+        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
 
-          <img
-            v-if="product.imageUrl"
-            :src="getImageUrl(product.imageUrl)"
-            :alt="product.name"
-            @error="handleImageError"
-            class="w-full h-full object-contain p-4 group-hover:scale-110 transition-all duration-500 relative z-10"
-          />
-          <div v-else class="w-full h-full flex items-center justify-center">
-            <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-
-          <!-- Badges Container -->
-          <div class="absolute top-3 left-3 z-20 flex flex-col gap-2">
-            <!-- Out of Stock Badge (Highest Priority) -->
-            <span
-              v-if="!product.inStock"
-              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-red-500 text-white"
-            >
-              OUT OF STOCK
-            </span>
-
-            <!-- Condition Badge -->
-            <span
-              v-else-if="product.condition === 'used'"
-              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-orange-500 text-white"
-            >
-              USED
-            </span>
-
-            <!-- New Badge -->
-            <span
-              v-else-if="product.condition === 'new' && isNewProduct"
-              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-green-500 text-white"
-            >
-              NEW
-            </span>
-          </div>
-
-          <!-- Top Right Badges (Featured, Best Seller) -->
-          <div class="absolute top-3 right-14 z-20 flex flex-col gap-2 items-end">
-            <!-- Featured Badge -->
-            <span
-              v-if="product.featured"
-              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-purple-500 text-white"
-            >
-              FEATURED
-            </span>
-
-            <!-- Best Seller Badge (based on some criteria, e.g., quantity sold) -->
-            <span
-              v-if="isBestSeller"
-              class="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm bg-yellow-500 text-black"
-            >
-              BEST SELLER
-            </span>
-          </div>
-
-          <!-- Hover effect overlay -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        </div>
-
-        <!-- Product Info -->
-        <div class="p-4 relative">
-          <!-- Yellow accent bar -->
-          <div class="absolute top-0 left-4 right-4 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-          <!-- Product Name -->
-          <h3 class="text-sm font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors leading-snug min-h-[40px] pt-2">
-            {{ product.name }}
-          </h3>
-
-          <!-- Price Section -->
-          <div class="flex items-end justify-between">
-            <div>
-              <span class="text-2xl font-black text-gray-900 group-hover:text-yellow-600 transition-colors">
-                TZS {{ formatPrice(product.sellingPrice || 0) }}
-              </span>
-            </div>
-
-            <!-- View arrow -->
-            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-900 group-hover:bg-yellow-400 transition-all duration-300 transform group-hover:scale-110">
-              <svg class="w-4 h-4 text-white group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        </div>
+      <!-- Out of stock overlay -->
+      <div v-if="!product.inStock" class="absolute inset-0 bg-white/60 flex items-center justify-center">
+        <span class="bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-md tracking-wide">SOLD OUT</span>
       </div>
     </NuxtLink>
+
+    <!-- Product Info -->
+    <div class="flex flex-col flex-1 p-4">
+      <!-- Brand / category eyebrow -->
+      <p v-if="product.brand?.name" class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-1">
+        {{ product.brand.name }}
+      </p>
+
+      <!-- Product Name -->
+      <NuxtLink :to="`/products/${product.id}`" class="block">
+        <h3 class="text-sm font-medium text-gray-900 line-clamp-2 leading-snug min-h-[40px] hover:text-yellow-600 transition-colors">
+          {{ product.name }}
+        </h3>
+      </NuxtLink>
+
+      <!-- Price -->
+      <div class="mt-2 mb-3">
+        <span class="text-lg font-extrabold text-gray-900">
+          TZS {{ formatPrice(product.sellingPrice || 0) }}
+        </span>
+      </div>
+
+      <!-- Add to Cart -->
+      <button
+        @click.prevent="handleAddToCart"
+        :disabled="!product.inStock"
+        class="mt-auto w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200"
+        :class="product.inStock
+          ? (added ? 'bg-green-500 text-white' : 'bg-gray-900 text-white hover:bg-yellow-400 hover:text-black')
+          : 'bg-gray-100 text-gray-400 cursor-not-allowed'"
+      >
+        <template v-if="!product.inStock">Out of Stock</template>
+        <template v-else-if="added">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+          Added
+        </template>
+        <template v-else>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Add to Cart
+        </template>
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { useWishlistStore } from '~/stores/wishlist'
+import { useCartStore } from '~/stores/cart'
 
 const props = defineProps({
   product: {
@@ -128,53 +102,52 @@ const props = defineProps({
 
 const { baseURL } = useApi()
 const wishlistStore = useWishlistStore()
+const cartStore = useCartStore()
 
-// Check if product is in wishlist
+const imageFailed = ref(false)
+const added = ref(false)
+
 const isInWishlist = computed(() => wishlistStore.isInWishlist(props.product.id))
 
-// Toggle wishlist
 const toggleWishlist = () => {
   wishlistStore.toggleWishlist(props.product)
 }
 
-// Check if product is new (created within last 30 days)
+const handleAddToCart = () => {
+  if (!props.product.inStock) return
+  cartStore.addToCart(props.product, 1)
+  added.value = true
+  setTimeout(() => { added.value = false }, 1500)
+}
+
 const isNewProduct = computed(() => {
   if (!props.product.createdAt) return false
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  return new Date(props.product.createdAt) > thirtyDaysAgo
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  return new Date(props.product.createdAt) > sevenDaysAgo
 })
 
-// Check if product is a best seller (you can adjust the criteria)
-// For now, let's use a simple heuristic: if it has high sales or is marked as popular
-const isBestSeller = computed(() => {
-  // You can add your own logic here, e.g.:
-  // - Check if product.quantitySold > threshold
-  // - Check if product.popular === true
-  // - Check if product.rating > 4.5
-  return props.product.popular || (props.product.quantitySold && props.product.quantitySold > 50)
+// One badge, by priority: sold out is handled by overlay, so here we rank
+// featured > used > best seller > new
+const badge = computed(() => {
+  if (props.product.featured) return { label: 'FEATURED', class: 'bg-purple-600 text-white' }
+  if (props.product.condition === 'used') return { label: 'USED', class: 'bg-orange-500 text-white' }
+  if (props.product.popular || (props.product.quantitySold && props.product.quantitySold > 50)) {
+    return { label: 'BEST SELLER', class: 'bg-yellow-400 text-black' }
+  }
+  if (props.product.condition === 'new' && isNewProduct.value) return { label: 'NEW', class: 'bg-green-500 text-white' }
+  return null
 })
 
 const getImageUrl = (imageUrl) => {
   if (!imageUrl) return ''
-
-  // Handle full URLs (like Cloudinary)
   if (imageUrl.startsWith('http')) {
-    // If it's a Cloudinary URL, add optimization transformations
     if (imageUrl.includes('cloudinary.com')) {
-      // Insert transformations after /upload/ - using pad with white background for consistency
       return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_800,h_800,c_pad,b_white/')
     }
     return imageUrl
   }
-
-  // Handle relative URLs
   return `${baseURL}${imageUrl}`
-}
-
-const handleImageError = (event) => {
-  // Hide the broken image and show placeholder instead
-  event.target.style.display = 'none'
 }
 
 const formatPrice = (price) => {

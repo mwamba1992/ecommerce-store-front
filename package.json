@@ -20,5 +20,8 @@
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.19"
+  },
+  "overrides": {
+    "@vue/devtools-kit": "7.7.9"
   }
 }
