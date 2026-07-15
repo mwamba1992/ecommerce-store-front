@@ -22,9 +22,8 @@
         <p class="text-red-700 text-sm">{{ errorMessage }}</p>
       </div>
 
-      <!-- Set Password Form -->
-      <form v-if="!successMessage" @submit.prevent="handleSetPassword" class="space-y-5">
-        <!-- Phone Number -->
+      <!-- Step 1: ask for the code -->
+      <form v-if="!successMessage && step === 'phone'" @submit.prevent="handleRequestCode" class="space-y-5">
         <div>
           <label for="phone" class="block text-sm font-semibold text-gray-900 mb-2">
             Phone Number *
@@ -37,7 +36,46 @@
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 outline-none transition-all"
             placeholder="+255 XXX XXX XXX"
           />
-          <p class="text-xs text-gray-500 mt-1">Use the phone number from your order</p>
+          <p class="text-xs text-gray-500 mt-1">Use the phone number from your order. We'll text you a 6-digit code.</p>
+        </div>
+
+        <button
+          type="submit"
+          :disabled="isLoading"
+          class="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-400 text-black font-bold py-3.5 rounded-lg transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center space-x-2"
+        >
+          <svg v-if="isLoading" class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>{{ isLoading ? 'Sending Code...' : 'Send Me a Code' }}</span>
+        </button>
+      </form>
+
+      <!-- Step 2: code + new password -->
+      <form v-else-if="!successMessage" @submit.prevent="handleSetPassword" class="space-y-5">
+        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p class="text-blue-800 text-sm">{{ noticeMessage }}</p>
+          <p class="text-blue-700 text-xs mt-1">Sent to {{ formData.phone }}</p>
+        </div>
+
+        <!-- Code -->
+        <div>
+          <label for="otp" class="block text-sm font-semibold text-gray-900 mb-2">
+            6-Digit Code *
+          </label>
+          <input
+            v-model="formData.otp"
+            type="text"
+            id="otp"
+            required
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            pattern="\d{6}"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 outline-none transition-all tracking-[0.5em] text-center text-lg font-bold"
+            placeholder="000000"
+          />
+          <p class="text-xs text-gray-500 mt-1">The code expires in 10 minutes.</p>
         </div>
 
         <!-- Password -->
@@ -56,7 +94,6 @@
           />
         </div>
 
-        <!-- Set Password Button -->
         <button
           type="submit"
           :disabled="isLoading"
@@ -66,6 +103,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           <span>{{ isLoading ? 'Setting Password...' : 'Set Password' }}</span>
+        </button>
+
+        <button
+          type="button"
+          @click="backToPhone"
+          class="w-full text-sm text-gray-600 hover:text-gray-900 py-1"
+        >
+          Wrong number, or didn't get a code? Start again
         </button>
       </form>
 
@@ -98,12 +143,16 @@ const route = useRoute()
 
 const formData = reactive({
   phone: '',
-  password: ''
+  password: '',
+  otp: ''
 })
 
+// 'phone' -> ask for a code; 'code' -> enter the code and choose a password.
+const step = ref('phone')
 const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const noticeMessage = ref('')
 
 // Pre-fill phone number from query parameter
 onMounted(() => {
@@ -112,27 +161,49 @@ onMounted(() => {
   }
 })
 
+// Surfaces the API's message where there is one. Note the server answers
+// identically for registered and unregistered numbers, so this deliberately
+// cannot tell the visitor whether the number has an account.
+const readError = (error, fallback) =>
+  error.data?.message || error.message || fallback
+
+const handleRequestCode = async () => {
+  errorMessage.value = ''
+  isLoading.value = true
+
+  try {
+    const response = await authStore.requestSetPasswordOtp(formData.phone)
+    noticeMessage.value = response?.message || 'If that number has an account without a password, we have sent it a code.'
+    step.value = 'code'
+  } catch (error) {
+    console.error('Request code failed:', error)
+    errorMessage.value = readError(error, 'Could not send a code. Please try again shortly.')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const backToPhone = () => {
+  step.value = 'phone'
+  formData.otp = ''
+  errorMessage.value = ''
+}
+
 const handleSetPassword = async () => {
   errorMessage.value = ''
   successMessage.value = ''
   isLoading.value = true
 
   try {
-    await authStore.setPassword(formData.phone, formData.password)
+    await authStore.setPassword(formData.phone, formData.password, formData.otp)
 
     successMessage.value = 'Password set successfully! You can now login to your account.'
     formData.phone = ''
     formData.password = ''
+    formData.otp = ''
   } catch (error) {
     console.error('Set password failed:', error)
-
-    if (error.data?.message) {
-      errorMessage.value = error.data.message
-    } else if (error.message) {
-      errorMessage.value = error.message
-    } else {
-      errorMessage.value = 'Failed to set password. Please try again.'
-    }
+    errorMessage.value = readError(error, 'Failed to set password. Please try again.')
   } finally {
     isLoading.value = false
   }

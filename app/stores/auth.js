@@ -86,18 +86,30 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // Set password for existing customer (from checkout)
-    async setPassword(phone, password) {
+    // Ask for a one-time code by SMS so the caller can prove the number is theirs.
+    // Always resolves the same way whether or not the number has an account.
+    async requestSetPasswordOtp(phone) {
+      const { apiFetch } = useApi()
       try {
-        const response = await $fetch('https://business.mwendavano.com/api/customer-auth/set-password', {
+        return await apiFetch('/customer-auth/request-otp', {
           method: 'POST',
-          body: { phone, password },
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          body: { phone }
         })
+      } catch (error) {
+        console.error('Request OTP error:', error)
+        throw error
+      }
+    },
 
-        return response
+    // Set password for existing customer (from checkout). Requires the code
+    // from requestSetPasswordOtp — the server rejects the call without it.
+    async setPassword(phone, password, otp) {
+      const { apiFetch } = useApi()
+      try {
+        return await apiFetch('/customer-auth/set-password', {
+          method: 'POST',
+          body: { phone, password, otp }
+        })
       } catch (error) {
         console.error('Set password error:', error)
         throw error
