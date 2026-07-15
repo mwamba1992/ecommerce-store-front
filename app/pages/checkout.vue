@@ -231,6 +231,7 @@ import { useAuthStore } from '~/stores/auth'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
+const { formatPrice } = useFormat()
 const router = useRouter()
 
 const isProcessing = ref(false)
@@ -260,9 +261,6 @@ onMounted(() => {
   }
 })
 
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
-}
 
 const handleSubmit = async () => {
   // Validate form
@@ -353,10 +351,4 @@ useHead({
   ]
 })
 
-// Redirect if cart is empty
-watchEffect(() => {
-  if (cartStore.items.length === 0 && process.client) {
-    // Will show empty state in template
-  }
-})
 </script>

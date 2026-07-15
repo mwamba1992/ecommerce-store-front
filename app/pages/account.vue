@@ -154,6 +154,7 @@ import { useAuthStore } from '~/stores/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { formatPrice } = useFormat()
 
 const customer = computed(() => authStore.customer)
 const orders = ref([])
@@ -198,9 +199,6 @@ const handleLogout = () => {
   }
 }
 
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
-}
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)

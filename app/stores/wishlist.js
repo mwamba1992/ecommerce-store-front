@@ -58,14 +58,14 @@ export const useWishlistStore = defineStore('wishlist', {
 
     // Save to localStorage
     saveToLocalStorage() {
-      if (process.client) {
+      if (import.meta.client) {
         localStorage.setItem('wishlist', JSON.stringify(this.items))
       }
     },
 
     // Load from localStorage
     loadFromLocalStorage() {
-      if (process.client) {
+      if (import.meta.client) {
         const savedWishlist = localStorage.getItem('wishlist')
         if (savedWishlist) {
           try {

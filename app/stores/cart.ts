@@ -68,13 +68,13 @@ export const useCartStore = defineStore('cart', {
     },
 
     saveToLocalStorage() {
-      if (process.client) {
+      if (import.meta.client) {
         localStorage.setItem('cart', JSON.stringify(this.items))
       }
     },
 
     loadFromLocalStorage() {
-      if (process.client) {
+      if (import.meta.client) {
         const savedCart = localStorage.getItem('cart')
         if (savedCart) {
           this.items = JSON.parse(savedCart)

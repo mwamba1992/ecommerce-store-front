@@ -233,7 +233,7 @@ import { useCartStore } from '~/stores/cart'
 
 const route = useRoute()
 const { getProductsWithPricing } = useProducts()
-const { baseURL } = useApi()
+const { formatPrice, productImage } = useFormat()
 const cartStore = useCartStore()
 
 const quantity = ref(1)
@@ -269,26 +269,7 @@ if (!product.value) {
   if (event) setResponseStatus(event, 404)
 }
 
-const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return ''
-
-  // Handle full URLs (like Cloudinary)
-  if (imageUrl.startsWith('http')) {
-    // If it's a Cloudinary URL, add optimization transformations for detail page (higher res)
-    if (imageUrl.includes('cloudinary.com')) {
-      // Insert transformations after /upload/ - using fit to maximize space
-      return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1200,h_1200,c_fit/')
-    }
-    return imageUrl
-  }
-
-  // Handle relative URLs
-  return `${baseURL}${imageUrl}`
-}
-
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
-}
+const getImageUrl = (imageUrl) => productImage(imageUrl, 'detail')
 
 const incrementQuantity = () => {
   quantity.value++

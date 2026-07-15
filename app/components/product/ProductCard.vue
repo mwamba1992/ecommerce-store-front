@@ -23,7 +23,7 @@
     <NuxtLink :to="`/products/${product.id}`" class="block relative aspect-square bg-gray-50 overflow-hidden">
       <img
         v-if="product.imageUrl && !imageFailed"
-        :src="getImageUrl(product.imageUrl)"
+        :src="productImage(product.imageUrl, 'card')"
         :alt="product.name"
         loading="lazy"
         @error="imageFailed = true"
@@ -100,7 +100,7 @@ const props = defineProps({
   }
 })
 
-const { baseURL } = useApi()
+const { formatPrice, productImage } = useFormat()
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
 
@@ -127,30 +127,14 @@ const isNewProduct = computed(() => {
   return new Date(props.product.createdAt) > sevenDaysAgo
 })
 
-// One badge, by priority: sold out is handled by overlay, so here we rank
-// featured > used > best seller > new
+// One badge, by priority: sold out is handled by the overlay, so here we rank
+// used > new. There were also FEATURED and BEST SELLER branches keyed on
+// product.featured / product.popular / product.quantitySold — the API has never
+// returned any of those fields, so neither badge could ever render. Removed
+// rather than left as decoration; re-add them alongside the backing fields.
 const badge = computed(() => {
-  if (props.product.featured) return { label: 'FEATURED', class: 'bg-purple-600 text-white' }
   if (props.product.condition === 'used') return { label: 'USED', class: 'bg-orange-500 text-white' }
-  if (props.product.popular || (props.product.quantitySold && props.product.quantitySold > 50)) {
-    return { label: 'BEST SELLER', class: 'bg-yellow-400 text-black' }
-  }
   if (props.product.condition === 'new' && isNewProduct.value) return { label: 'NEW', class: 'bg-green-500 text-white' }
   return null
 })
-
-const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return ''
-  if (imageUrl.startsWith('http')) {
-    if (imageUrl.includes('cloudinary.com')) {
-      return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_800,h_800,c_pad,b_white/')
-    }
-    return imageUrl
-  }
-  return `${baseURL}${imageUrl}`
-}
-
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
-}
 </script>

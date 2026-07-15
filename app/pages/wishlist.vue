@@ -128,30 +128,17 @@ import { useCartStore } from '~/stores/cart'
 
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
-const { baseURL } = useApi()
+const { formatPrice, productImage } = useFormat()
 
 // Load wishlist on mount
 onMounted(() => {
   wishlistStore.loadFromLocalStorage()
 })
 
-const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return ''
-  if (imageUrl.startsWith('http')) {
-    if (imageUrl.includes('cloudinary.com')) {
-      return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_800,h_800,c_pad,b_white/')
-    }
-    return imageUrl
-  }
-  return `${baseURL}${imageUrl}`
-}
+const getImageUrl = (imageUrl) => productImage(imageUrl, 'card')
 
 const handleImageError = (event) => {
   event.target.style.display = 'none'
-}
-
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
 }
 
 const addToCart = (item) => {

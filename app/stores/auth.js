@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     // Initialize auth from localStorage
     initAuth() {
-      if (process.client) {
+      if (import.meta.client) {
         const token = localStorage.getItem('customerToken')
         const customer = localStorage.getItem('customer')
 
@@ -45,7 +45,7 @@ export const useAuthStore = defineStore('auth', {
         this.isAuthenticated = true
 
         // Save to localStorage
-        if (process.client) {
+        if (import.meta.client) {
           localStorage.setItem('customerToken', response.access_token)
           localStorage.setItem('customer', JSON.stringify(response.customer))
         }
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', {
         this.isAuthenticated = true
 
         // Save to localStorage
-        if (process.client) {
+        if (import.meta.client) {
           localStorage.setItem('customerToken', response.access_token)
           localStorage.setItem('customer', JSON.stringify(response.customer))
         }
@@ -116,7 +116,7 @@ export const useAuthStore = defineStore('auth', {
         this.customer = response.customer
 
         // Update localStorage
-        if (process.client) {
+        if (import.meta.client) {
           localStorage.setItem('customer', JSON.stringify(response.customer))
         }
 
@@ -146,7 +146,7 @@ export const useAuthStore = defineStore('auth', {
         this.customer = response.customer
 
         // Update localStorage
-        if (process.client) {
+        if (import.meta.client) {
           localStorage.setItem('customer', JSON.stringify(response.customer))
         }
 
@@ -215,7 +215,7 @@ export const useAuthStore = defineStore('auth', {
       this.isAuthenticated = false
 
       // Clear localStorage
-      if (process.client) {
+      if (import.meta.client) {
         localStorage.removeItem('customerToken')
         localStorage.removeItem('customer')
       }

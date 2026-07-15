@@ -158,28 +158,9 @@
 import { useCartStore } from '~/stores/cart'
 
 const cartStore = useCartStore()
-const { baseURL } = useApi()
+const { formatPrice, productImage } = useFormat()
 
-const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return ''
-
-  // Handle full URLs (like Cloudinary)
-  if (imageUrl.startsWith('http')) {
-    // If it's a Cloudinary URL, add optimization transformations
-    if (imageUrl.includes('cloudinary.com')) {
-      // Insert transformations after /upload/ (smaller size for cart thumbnails)
-      return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_300,h_300,c_fit/')
-    }
-    return imageUrl
-  }
-
-  // Handle relative URLs
-  return `${baseURL}${imageUrl}`
-}
-
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
-}
+const getImageUrl = (imageUrl) => productImage(imageUrl, 'small')
 
 const proceedToCheckout = () => {
   navigateTo('/checkout')

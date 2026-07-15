@@ -302,7 +302,7 @@ const mobileMenuOpen = ref(false)
 
 // Search functionality
 const { getProductsWithPricing } = useProducts()
-const { baseURL } = useApi()
+const { formatPrice, productImage } = useFormat()
 const searchQuery = ref('')
 const searchResults = ref([])
 const showSearchResults = ref(false)
@@ -345,20 +345,7 @@ const closeSearch = () => {
   searchResults.value = []
 }
 
-const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return ''
-  if (imageUrl.startsWith('http')) {
-    if (imageUrl.includes('cloudinary.com')) {
-      return imageUrl.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_pad,b_white/')
-    }
-    return imageUrl
-  }
-  return `${baseURL}${imageUrl}`
-}
-
-const formatPrice = (price) => {
-  return Number(price).toLocaleString('en-US', { minimumFractionDigits: 0 })
-}
+const getImageUrl = (imageUrl) => productImage(imageUrl, 'thumb')
 
 // Click outside directive
 const vClickOutside = {
