@@ -22,5 +22,9 @@
 </template>
 
 <script setup>
-useHead({ title: 'Shipping Information - Global Authentic TZ' })
+useSeo({
+  title: 'Shipping Information | Global Authentic TZ',
+  description: 'Delivery areas, times and costs: same day or next day within Dar es Salaam and 2–5 business days to other regions of Tanzania.',
+  path: '/shipping'
+})
 </script>

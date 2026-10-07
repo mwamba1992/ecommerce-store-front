@@ -90,5 +90,9 @@ const submitForm = () => {
   sent.value = true
 }
 
-useHead({ title: 'Contact Us - Global Authentic TZ' })
+useSeo({
+  title: 'Contact Us | Global Authentic TZ',
+  description: 'Contact Global Authentic TZ in Kariakoo, Dar es Salaam by WhatsApp, phone or email. We usually reply within a few hours.',
+  path: '/contact'
+})
 </script>

@@ -26,5 +26,9 @@
 </template>
 
 <script setup>
-useHead({ title: 'Terms of Service - Global Authentic TZ' })
+useSeo({
+  title: 'Terms of Service | Global Authentic TZ',
+  description: 'The terms that apply when you browse and order from Global Authentic TZ.',
+  path: '/terms'
+})
 </script>

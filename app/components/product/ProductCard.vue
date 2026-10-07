@@ -24,7 +24,9 @@
       <img
         v-if="product.imageUrl && !imageFailed"
         :src="productImage(product.imageUrl, 'card')"
-        :alt="product.name"
+        :alt="productImageAlt(product)"
+        :width="imageSize(product.imageUrl, 'card')?.width"
+        :height="imageSize(product.imageUrl, 'card')?.height"
         loading="lazy"
         @error="imageFailed = true"
         class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
@@ -58,7 +60,7 @@
       <!-- Price -->
       <div class="mt-2 mb-3">
         <span class="text-lg font-extrabold text-gray-900">
-          TZS {{ formatPrice(product.sellingPrice || 0) }}
+          {{ hasPrice(product) ? `TZS ${formatPrice(product.sellingPrice)}` : 'Price on request' }}
         </span>
       </div>
 
@@ -92,6 +94,7 @@
 <script setup>
 import { useWishlistStore } from '~/stores/wishlist'
 import { useCartStore } from '~/stores/cart'
+import { hasPrice, productImageAlt } from '#shared/utils/seo'
 
 const props = defineProps({
   product: {
@@ -100,7 +103,7 @@ const props = defineProps({
   }
 })
 
-const { formatPrice, productImage } = useFormat()
+const { formatPrice, productImage, imageSize } = useFormat()
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
 

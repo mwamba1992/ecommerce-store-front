@@ -176,6 +176,36 @@ Format: `https://wa.me/255676107301?text=ORDER:${productId}`
 - Why choose us
 - Contact call-to-action
 
+## SEO
+
+Every product, category and brand page is SEO-ready automatically; nothing is configured per product.
+
+- **One source of truth:** `shared/utils/seo.ts` derives titles, meta descriptions, image alt text, canonical paths and JSON-LD from the catalogue record. Pages, the sitemap and the audit all call it.
+- **Head tags:** pages call `useSeo()` (`app/composables/useSeo.ts`), which emits the title, description, canonical, robots, Open Graph and structured data together.
+- **Routes:** `/products/:id`, `/categories/:slug`, `/brands/:slug`. Categories and brands are derived from the products, so a new one appears as soon as a product uses it.
+- **`/sitemap.xml` and `/robots.txt`** are generated (`server/routes/`). The sitemap lists exactly what the catalogue API returns plus the static pages; cart, checkout, account and admin are excluded and disallowed.
+- **Status codes:** a missing product, category or brand answers 404; a catalogue API outage answers 503 so live pages are not reported as gone.
+- **SEO report:** `/admin/seo` renders every product page and checks it (status, canonical, title, description, H1, Product schema, price, availability, image, Open Graph, sitemap, internal links) and lists catalogue gaps such as missing images or descriptions.
+
+### Environment
+
+| Variable | Purpose |
+| --- | --- |
+| `SITE_URL` | Public origin used in canonicals, Open Graph and the sitemap. Default `https://store.mwendavano.com`. |
+| `NUXT_SEO_AUDIT_TOKEN` | Secret required by `/admin/seo`. The report is disabled in production until this is set. |
+| `NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console "HTML tag" verification code. |
+
+### Optional catalogue fields
+
+If `GET /items/storefront` starts returning `seoTitle`, `metaDescription`, `shortDescription`, `model` or `updatedAt`, the storefront uses them (overriding the generated title/description, and adding `lastmod` to the sitemap). Until then the generated defaults apply.
+
+### After deploying
+
+1. Verify the property in Google Search Console (DNS record, or set `NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION`).
+2. Submit `https://store.mwendavano.com/sitemap.xml`.
+3. Inspect a few product URLs and request indexing for the priority ones.
+4. Watch the Pages and Product snippets reports, and re-run `/admin/seo` after catalogue changes.
+
 ## State Management
 
 ### Cart Store (Pinia)

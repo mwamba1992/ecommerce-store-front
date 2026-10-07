@@ -199,10 +199,9 @@
 </template>
 
 <script setup>
-useHead({
-  title: 'About Us - Global Authentic TZ',
-  meta: [
-    { name: 'description', content: 'Learn about Global Authentic TZ and our commitment to bringing authentic international smartwatches and wearables to Tanzania' }
-  ]
+useSeo({
+  title: 'About Us | Global Authentic TZ',
+  description: 'Learn about Global Authentic TZ and our commitment to bringing authentic international smartwatches and wearables to Tanzania.',
+  path: '/about'
 })
 </script>

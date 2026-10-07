@@ -23,6 +23,8 @@
 </template>
 
 <script setup>
+import { faqJsonLd } from '#shared/utils/seo'
+
 const faqs = [
   { q: 'How do I place an order?', a: 'Browse our products, add items to your cart, and proceed to checkout. Fill in your delivery details and choose a payment method — our team then confirms your order by phone or WhatsApp.' },
   { q: 'What payment methods do you accept?', a: 'We accept Cash on Delivery and Mobile Money (M-Pesa, Tigo Pesa, Airtel Money).' },
@@ -32,5 +34,11 @@ const faqs = [
   { q: 'Do I need an account to shop?', a: 'No — you can check out as a guest. Creating an account lets you track orders and check out faster next time.' }
 ]
 
-useHead({ title: 'Help Center - Global Authentic TZ' })
+useSeo({
+  title: 'Help Center | Global Authentic TZ',
+  description: 'Answers to common questions about ordering, payment, delivery, authenticity and returns at Global Authentic TZ.',
+  path: '/help',
+  // Same questions as shown on the page, with the link markup removed.
+  jsonLd: [faqJsonLd(faqs.map(faq => ({ question: faq.q, answer: faq.a.replace(/<[^>]*>/g, '') })))]
+})
 </script>

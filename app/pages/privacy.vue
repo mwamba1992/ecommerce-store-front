@@ -25,5 +25,9 @@
 </template>
 
 <script setup>
-useHead({ title: 'Privacy Policy - Global Authentic TZ' })
+useSeo({
+  title: 'Privacy Policy | Global Authentic TZ',
+  description: 'How Global Authentic TZ collects, uses and protects your personal information when you shop with us.',
+  path: '/privacy'
+})
 </script>

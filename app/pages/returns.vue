@@ -26,5 +26,9 @@
 </template>
 
 <script setup>
-useHead({ title: 'Returns & Refunds - Global Authentic TZ' })
+useSeo({
+  title: 'Returns & Refunds | Global Authentic TZ',
+  description: 'Our returns policy: request a return within 7 days of delivery for unused items in original packaging. How refunds are processed.',
+  path: '/returns'
+})
 </script>

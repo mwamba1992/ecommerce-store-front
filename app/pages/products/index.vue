@@ -189,6 +189,8 @@
 </template>
 
 <script setup>
+import { SITE, breadcrumbJsonLd } from '#shared/utils/seo'
+
 const { getProductsWithPricing } = useProducts()
 const { apiFetch } = useApi()
 
@@ -286,10 +288,17 @@ const clearFilters = () => {
   sortBy.value = 'featured'
 }
 
-useHead({
-  title: 'Products - Global Authentic TZ | Shop International Brands',
-  meta: [
-    { name: 'description', content: 'Browse authentic global products from trusted international brands, right here in Tanzania' }
-  ]
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Products', path: '/products' }
+]
+
+// Filters and sorting are client-side state, so this page has one URL and one
+// canonical no matter how it is being viewed.
+useSeo({
+  title: `All Products – Smart Watches, Earbuds & Accessories in Tanzania | ${SITE.titleBrand}`,
+  description: 'Browse every product we stock: original smart watches, fitness bands, earbuds and accessories, with prices in TZS and delivery across Tanzania.',
+  path: '/products',
+  jsonLd: [breadcrumbJsonLd(crumbs, useSiteUrl())]
 })
 </script>

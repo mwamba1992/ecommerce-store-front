@@ -13,18 +13,20 @@
         <div class="text-center">
           <!-- Premium Logo Display -->
           <div class="mb-4 sm:mb-6 animate-fade-in">
-            <div class="relative inline-block">
+            <h1 aria-label="Global Authentic TZ">
+            <span class="relative inline-block">
               <!-- Crown positioned above 'g' -->
               <svg class="w-8 h-6 sm:w-10 sm:h-8 md:w-14 md:h-10 lg:w-16 lg:h-12 text-yellow-400 absolute -top-5 sm:-top-7 md:-top-9 lg:-top-11 left-0 drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]" fill="currentColor" viewBox="0 0 640 512">
                 <path d="M528 448H112c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm64-320c-26.5 0-48 21.5-48 48 0 7.1 1.6 13.7 4.4 19.8L476 239.2c-15.4 9.2-35.3 4-44.2-11.6L350.3 85C361 76.2 368 63 368 48c0-26.5-21.5-48-48-48s-48 21.5-48 48c0 15 7 28.2 17.7 37l-81.5 142.6c-8.9 15.6-28.9 20.8-44.2 11.6l-72.3-43.4c2.7-6 4.4-12.7 4.4-19.8 0-26.5-21.5-48-48-48S0 149.5 0 176s21.5 48 48 48c2.6 0 5.2-.4 7.7-.8L128 416h384l72.3-192.8c2.5.4 5.1.8 7.7.8 26.5 0 48-21.5 48-48s-21.5-48-48-48z"/>
               </svg>
-              <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white lowercase mb-2 sm:mb-3" style="font-family: 'Arial Black', Arial, sans-serif; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(234, 179, 8, 0.3);">
+              <span class="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white lowercase mb-2 sm:mb-3" style="font-family: 'Arial Black', Arial, sans-serif; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(234, 179, 8, 0.3);">
                 global
-              </h1>
-            </div>
-            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-yellow-400 uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-4 sm:mb-6" style="font-family: Arial, sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+              </span>
+            </span>
+            <span class="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-yellow-400 uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-4 sm:mb-6" style="font-family: Arial, sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
               Authentic TZ
-            </h2>
+            </span>
+            </h1>
             <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-4 sm:mb-6"></div>
           </div>
 
@@ -153,19 +155,8 @@
         <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-        <div v-for="n in 8" :key="n" class="card animate-pulse">
-          <div class="bg-gray-200 h-48"></div>
-          <div class="p-4 space-y-3">
-            <div class="h-4 bg-gray-200 rounded"></div>
-            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-          </div>
-        </div>
-      </div>
-
       <!-- Products Grid -->
-      <template v-else-if="products.length > 0">
+      <template v-if="products.length > 0">
         <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           <ProductCard v-for="product in products" :key="product.id" :product="product" />
         </div>
@@ -191,7 +182,7 @@
       </div>
     </section>
 
-    <!-- Categories Section -->
+    <!-- Categories and brands: plain links into every part of the catalogue -->
     <section class="bg-gray-50 py-12 sm:py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Shop by Category</h2>
@@ -199,12 +190,23 @@
           <NuxtLink
             v-for="category in categories"
             :key="category.id"
-            :to="`/products?category=${category.id}`"
+            :to="categoryPath(category)"
             class="bg-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow"
           >
-            <div class="text-4xl mb-3">{{ category.icon || '📦' }}</div>
-            <h3 class="font-semibold text-gray-900">{{ category.code }}</h3>
-            <p class="text-sm text-gray-600">{{ category.description }}</p>
+            <h3 class="font-semibold text-gray-900">{{ category.label }}</h3>
+            <p class="text-sm text-gray-600">{{ category.count }} product{{ category.count === 1 ? '' : 's' }}</p>
+          </NuxtLink>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mt-12 mb-6 sm:mb-8 text-center">Shop by Brand</h2>
+        <div class="flex flex-wrap justify-center gap-3">
+          <NuxtLink
+            v-for="brand in brands"
+            :key="brand.id"
+            :to="brandPath(brand)"
+            class="px-5 py-2.5 bg-white rounded-full border border-gray-200 text-sm font-semibold text-gray-800 hover:border-yellow-400 hover:text-yellow-600 transition-colors"
+          >
+            {{ brand.label }}
           </NuxtLink>
         </div>
       </div>
@@ -248,29 +250,25 @@
 </template>
 
 <script setup>
-const { getProductsWithPricing } = useProducts()
-const { apiFetch } = useApi()
+import { SITE, brandPath, categoryPath, collectBrands, collectCategories, websiteJsonLd } from '#shared/utils/seo'
+
+const siteUrl = useSiteUrl()
 
 // Server-rendered: fetched on the server for fast first paint + SEO
-const { data: allProducts, pending: loading } = await useAsyncData(
-  'home-products',
-  () => getProductsWithPricing(),
-  { default: () => [] }
-)
+const data = await useCatalogue('home', all => ({
+  products: all.slice(0, 8),
+  categories: collectCategories(all),
+  brands: collectBrands(all)
+}))
 
-const { data: categoriesData } = await useAsyncData(
-  'home-categories',
-  () => apiFetch('/common/type/ITEM_CATEGORY'),
-  { default: () => [] }
-)
+const products = computed(() => data.value.products)
+const categories = computed(() => data.value.categories)
+const brands = computed(() => data.value.brands)
 
-const products = computed(() => allProducts.value.slice(0, 8))
-const categories = computed(() => categoriesData.value)
-
-useHead({
-  title: 'Home - Global Authentic TZ | True Global Goods',
-  meta: [
-    { name: 'description', content: 'True global goods, right here in TZ. Shop authentic international products with confidence.' }
-  ]
+useSeo({
+  title: `${SITE.name} | Original Smart Watches, Earbuds & Gadgets in Tanzania`,
+  description: 'Shop original smart watches, fitness bands, earbuds and accessories from trusted global brands. Based in Kariakoo, Dar es Salaam, with delivery across Tanzania.',
+  path: '/',
+  jsonLd: [websiteJsonLd(siteUrl)]
 })
 </script>

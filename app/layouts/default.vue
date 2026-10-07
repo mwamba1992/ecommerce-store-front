@@ -27,6 +27,9 @@
             <NuxtLink to="/categories" class="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
               Categories
             </NuxtLink>
+            <NuxtLink to="/brands" class="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
+              Brands
+            </NuxtLink>
             <NuxtLink to="/about" class="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
               About
             </NuxtLink>
@@ -160,6 +163,9 @@
             <NuxtLink @click="mobileMenuOpen = false" to="/categories" class="px-4 py-3 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
               Categories
             </NuxtLink>
+            <NuxtLink @click="mobileMenuOpen = false" to="/brands" class="px-4 py-3 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
+              Brands
+            </NuxtLink>
             <NuxtLink @click="mobileMenuOpen = false" to="/about" class="px-4 py-3 text-gray-300 hover:text-yellow-400 hover:bg-white/5 rounded-lg font-semibold transition-all duration-200">
               About
             </NuxtLink>
@@ -232,6 +238,7 @@
             <ul class="space-y-3">
               <li><NuxtLink to="/products" class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center"><span class="mr-2">›</span> Products</NuxtLink></li>
               <li><NuxtLink to="/categories" class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center"><span class="mr-2">›</span> Categories</NuxtLink></li>
+              <li><NuxtLink to="/brands" class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center"><span class="mr-2">›</span> Brands</NuxtLink></li>
               <li><NuxtLink to="/about" class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center"><span class="mr-2">›</span> About Us</NuxtLink></li>
               <li><NuxtLink to="/contact" class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center"><span class="mr-2">›</span> Contact</NuxtLink></li>
             </ul>

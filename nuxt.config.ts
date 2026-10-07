@@ -20,11 +20,12 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Shop authentic international products from trusted global brands. True global goods, right here in Tanzania.' },
-        { name: 'keywords', content: 'Tanzania shopping, authentic products, global brands, international products, online store Tanzania' }
+        { name: 'description', content: 'Shop authentic international products from trusted global brands. True global goods, right here in Tanzania.' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        // Product images are the largest thing on every catalogue page.
+        { rel: 'preconnect', href: 'https://res.cloudinary.com' }
       ]
     }
   },
@@ -39,6 +40,14 @@ export default defineNuxtConfig({
     '/': { swr: 60 },
     '/products': { swr: 60 },
     '/products/**': { swr: 60 },
+    '/categories': { swr: 60 },
+    '/categories/**': { swr: 60 },
+    '/brands': { swr: 60 },
+    '/brands/**': { swr: 60 },
+    '/sitemap.xml': { swr: 300 },
+    // Internal SEO report: token-gated, rendered in the browser, never indexed.
+    '/admin/**': { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    '/api/**': { headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     // Personal or stateful — must never be cached and shared between visitors.
     '/cart': { swr: false },
     '/checkout': { swr: false },
@@ -50,8 +59,15 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Shared secret for the SEO report at /admin/seo. Set NUXT_SEO_AUDIT_TOKEN
+    // in production; while it is empty the report is only reachable in dev.
+    seoAuditToken: '',
     public: {
-      apiBase: process.env.API_BASE_URL || 'https://business.mwendavano.com/api'
+      apiBase: process.env.API_BASE_URL || 'https://business.mwendavano.com/api',
+      // Origin used for canonical URLs, Open Graph, structured data and the sitemap.
+      siteUrl: process.env.SITE_URL || 'https://store.mwendavano.com',
+      // Search Console "HTML tag" verification code (NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION).
+      googleSiteVerification: ''
     }
   }
 })
