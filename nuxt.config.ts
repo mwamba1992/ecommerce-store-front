@@ -23,7 +23,10 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Shop authentic international products from trusted global brands. True global goods, right here in Tanzania.' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        // The crowned "g" from the logo, cut from public/logo.jpeg.
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/icon-512.png' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         // Product images are the largest thing on every catalogue page.
         { rel: 'preconnect', href: 'https://res.cloudinary.com' }
       ]
@@ -67,7 +70,15 @@ export default defineNuxtConfig({
       // Origin used for canonical URLs, Open Graph, structured data and the sitemap.
       siteUrl: process.env.SITE_URL || 'https://store.mwendavano.com',
       // Search Console "HTML tag" verification code (NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION).
-      googleSiteVerification: ''
+      googleSiteVerification: '',
+      // Design preview only (NUXT_PUBLIC_MOCK_MERCHANDISING=true): fills ratings
+      // and previous prices with sample values so the layout can be reviewed
+      // before the backend supplies real ones. Never enable in production —
+      // it would publish invented reviews and discounts.
+      mockMerchandising: false,
+      // Optional photograph behind the home page banner (NUXT_PUBLIC_HERO_IMAGE),
+      // e.g. /hero.jpg in public/. Without it the banner is plain dark.
+      heroImage: ''
     }
   }
 })

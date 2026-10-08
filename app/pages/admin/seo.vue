@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">SEO report</h1>
     <p class="text-gray-600 mb-6 max-w-3xl">
       Renders every product page and checks what a search engine receives: status, indexability, canonical, title,

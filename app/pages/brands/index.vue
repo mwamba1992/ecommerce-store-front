@@ -12,7 +12,11 @@ import { SITE, brandPath, breadcrumbJsonLd, collectBrands } from '#shared/utils/
 
 const siteUrl = useSiteUrl()
 
-const brands = await useCatalogue('brands-index', all => collectBrands(all))
+const brands = await useCatalogue('brands-index', all => collectBrands(all).map(group => ({
+  ...group,
+  // Pictured by one of its own products.
+  cover: all.find(p => p.brand?.id === group.id && p.imageUrl)?.imageUrl ?? null
+})))
 
 const crumbs = [
   { name: 'Home', path: '/' },

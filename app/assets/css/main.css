@@ -1,21 +1,67 @@
+@import '@fontsource-variable/dm-sans';
+@import '@fontsource-variable/fraunces';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-canvas text-gray-800 antialiased font-sans text-base;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-gray-900 ring-offset-2 ring-offset-canvas;
+  }
+}
+
 @layer components {
+  /* The one primary action on a screen: near-black, with white text. */
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    @apply inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-md bg-gray-900 text-white transition-all duration-200 hover:bg-gray-700 active:scale-[0.98] disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    @apply inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-md bg-white text-gray-900 border border-gray-800 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98];
+  }
+
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-md bg-gray-900 text-white transition-all duration-200 hover:bg-gray-800 active:scale-[0.98];
+  }
+
+  /* Page titles */
+  .title {
+    @apply font-serif font-semibold tracking-tight text-gray-900;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300;
+    @apply bg-white rounded-card overflow-hidden;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-100 text-[15px] text-gray-900 transition-colors;
+  }
+
+  a.chip:hover {
+    @apply bg-gray-200 text-gray-900;
+  }
+
+  /* Small uppercase label above a title: brand, section kicker. */
+  .kicker {
+    @apply text-xs font-medium uppercase tracking-[0.1em] text-gray-500;
+  }
+
+  /* A section title with a short gold bar: a clear, branded start to each block. */
+  .section-heading {
+    @apply relative pl-4 text-xl sm:text-2xl font-bold text-gray-900;
+  }
+
+  .section-heading::before {
+    content: '';
+    @apply absolute left-0 top-1 bottom-1 w-1 rounded-full bg-yellow-400;
   }
 
   .input-field {
-    @apply w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+    @apply w-full border border-gray-300 bg-white rounded-lg px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent;
   }
 }

@@ -1,100 +1,108 @@
 <template>
-  <div class="group relative flex flex-col bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
-    <!-- Wishlist Heart Button -->
-    <button
-      @click.prevent="toggleWishlist"
-      class="absolute top-2.5 right-2.5 z-30 w-9 h-9 rounded-full bg-white shadow-sm ring-1 ring-gray-200 flex items-center justify-center hover:ring-gray-300 transition-all duration-200"
-      :class="isInWishlist ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
-      :aria-label="isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'"
+  <article class="group relative flex flex-col h-full bg-white rounded-card p-4 transition-shadow duration-300 hover:shadow-lift">
+    <!-- Photo -->
+    <NuxtLink
+      :to="`/products/${product.id}`"
+      class="relative block aspect-square rounded-lg overflow-hidden"
+      :style="showImage ? null : { backgroundColor: tintFor(product.id) }"
     >
-      <svg class="w-5 h-5" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-      </svg>
-    </button>
-
-    <!-- Single Priority Badge (top-left) -->
-    <div class="absolute top-2.5 left-2.5 z-20">
-      <span v-if="badge" class="text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm tracking-wide" :class="badge.class">
-        {{ badge.label }}
-      </span>
-    </div>
-
-    <!-- Product Image -->
-    <NuxtLink :to="`/products/${product.id}`" class="block relative aspect-square bg-gray-50 overflow-hidden">
       <img
-        v-if="product.imageUrl && !imageFailed"
+        v-if="showImage"
         :src="productImage(product.imageUrl, 'card')"
         :alt="productImageAlt(product)"
         :width="imageSize(product.imageUrl, 'card')?.width"
         :height="imageSize(product.imageUrl, 'card')?.height"
         loading="lazy"
         @error="imageFailed = true"
-        class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+        class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+        :class="{ 'opacity-45': !product.inStock }"
       />
-      <div v-else class="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-2">
-        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      </div>
-
-      <!-- Out of stock overlay -->
-      <div v-if="!product.inStock" class="absolute inset-0 bg-white/60 flex items-center justify-center">
-        <span class="bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-md tracking-wide">SOLD OUT</span>
-      </div>
+      <!-- No photograph: the product's initial on its tint -->
+      <span v-else class="absolute inset-0 flex items-center justify-center text-4xl font-medium text-gray-400" aria-hidden="true">
+        {{ initialOf(productName(product)) }}
+      </span>
     </NuxtLink>
 
-    <!-- Product Info -->
-    <div class="flex flex-col flex-1 p-4">
-      <!-- Brand / category eyebrow -->
-      <p v-if="product.brand?.name" class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-1">
-        {{ product.brand.name }}
+    <!-- Condition: always shown, since new and used versions of one model sit side by side -->
+    <span
+      class="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-semibold leading-5"
+      :class="product.condition === 'used' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-gray-300'"
+    >
+      {{ product.condition === 'used' ? 'Used' : 'New' }}
+    </span>
+
+    <!-- Wishlist -->
+    <button
+      type="button"
+      @click="toggleWishlist"
+      class="absolute top-2 right-2 w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+      :class="isInWishlist ? 'bg-white text-red-500' : 'bg-white/80 text-gray-500 hover:text-gray-900'"
+      :aria-label="isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'"
+      :aria-pressed="isInWishlist"
+    >
+      <svg class="w-[18px] h-[18px]" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    </button>
+
+    <!-- Tag: one state, in words. The row keeps its height so names line up. -->
+    <p class="mt-3 h-6">
+      <span v-if="badge" class="inline-flex items-center px-1.5 rounded text-sm font-semibold leading-5" :class="badge.class">{{ badge.label }}</span>
+    </p>
+
+    <NuxtLink :to="`/products/${product.id}`" class="block mt-1.5">
+      <h3 class="text-base font-semibold text-gray-800 leading-6 line-clamp-2 group-hover:underline">
+        {{ productName(product) }}
+      </h3>
+    </NuxtLink>
+
+    <!-- Spec line: what the catalogue knows about it -->
+    <p class="text-sm text-gray-600 leading-5 line-clamp-2">{{ specs }}</p>
+
+    <ProductStars v-if="rating" :average="rating.average" :count="rating.count" class="mt-1.5" />
+
+    <div class="mt-3 mb-5">
+      <p class="font-semibold tracking-tight" :class="!product.inStock ? 'text-gray-400' : saving ? 'text-[#006B40]' : 'text-gray-900'">
+        <template v-if="hasPrice(product)">
+          <span class="text-xs font-semibold align-top relative top-0.5 mr-0.5">TZS</span><span class="text-2xl leading-none">{{ formatPrice(product.sellingPrice) }}</span>
+        </template>
+        <span v-else class="text-lg">Price on request</span>
       </p>
-
-      <!-- Product Name -->
-      <NuxtLink :to="`/products/${product.id}`" class="block">
-        <h3 class="text-sm font-medium text-gray-900 line-clamp-2 leading-snug min-h-[40px] hover:text-yellow-600 transition-colors">
-          {{ product.name }}
-        </h3>
-      </NuxtLink>
-
-      <!-- Price -->
-      <div class="mt-2 mb-3">
-        <span class="text-lg font-extrabold text-gray-900">
-          {{ hasPrice(product) ? `TZS ${formatPrice(product.sellingPrice)}` : 'Price on request' }}
-        </span>
-      </div>
-
-      <!-- Add to Cart -->
-      <button
-        @click.prevent="handleAddToCart"
-        :disabled="!product.inStock"
-        class="mt-auto w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200"
-        :class="product.inStock
-          ? (added ? 'bg-green-500 text-white' : 'bg-gray-900 text-white hover:bg-yellow-400 hover:text-black')
-          : 'bg-gray-100 text-gray-400 cursor-not-allowed'"
-      >
-        <template v-if="!product.inStock">Out of Stock</template>
-        <template v-else-if="added">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-          </svg>
-          Added
-        </template>
-        <template v-else>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          Add to Cart
-        </template>
-      </button>
+      <template v-if="saving">
+        <p class="mt-1.5 text-sm font-semibold leading-4 text-[#006B40]">Save TZS {{ formatPrice(saving.amount) }}</p>
+        <p class="mt-1 text-sm leading-5 text-gray-600">Previous price: TZS {{ formatPrice(saving.previous) }}</p>
+      </template>
     </div>
-  </div>
+
+    <button
+      type="button"
+      @click="handleAddToCart"
+      :disabled="!canBuy"
+      class="mt-auto w-full inline-flex items-center justify-center gap-2 h-12 rounded-md border text-base font-semibold transition-colors"
+      :class="!canBuy
+        ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+        : added
+          ? 'border-green-700 bg-green-700 text-white'
+          : 'border-gray-800 text-gray-900 hover:bg-gray-900 hover:text-white'"
+    >
+      <template v-if="!product.inStock">Sold out</template>
+      <template v-else-if="!hasPrice(product)">Price on request</template>
+      <template v-else-if="added">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+        Added
+      </template>
+      <template v-else>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" /></svg>
+        Add to cart
+      </template>
+    </button>
+  </article>
 </template>
 
 <script setup>
 import { useWishlistStore } from '~/stores/wishlist'
 import { useCartStore } from '~/stores/cart'
-import { hasPrice, productImageAlt } from '#shared/utils/seo'
+import { categoryLabel, hasPrice, productImageAlt, productName, productRating, productSaving } from '#shared/utils/seo'
 
 const props = defineProps({
   product: {
@@ -103,6 +111,9 @@ const props = defineProps({
   }
 })
 
+// At or below this many units, say so: scarcity a shopper can act on.
+const LOW_STOCK_AT = 3
+
 const { formatPrice, productImage, imageSize } = useFormat()
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
@@ -110,14 +121,26 @@ const cartStore = useCartStore()
 const imageFailed = ref(false)
 const added = ref(false)
 
+const showImage = computed(() => props.product.imageUrl && !imageFailed.value)
 const isInWishlist = computed(() => wishlistStore.isInWishlist(props.product.id))
 
 const toggleWishlist = () => {
   wishlistStore.toggleWishlist(props.product)
 }
 
+const rating = computed(() => productRating(props.product))
+const saving = computed(() => productSaving(props.product))
+
+const canBuy = computed(() => props.product.inStock && hasPrice(props.product))
+
+// Brand and category; condition has its own tag on the photo.
+const specs = computed(() => [
+  props.product.brand?.name,
+  props.product.category && categoryLabel(props.product.category)
+].filter(Boolean).join(' · '))
+
 const handleAddToCart = () => {
-  if (!props.product.inStock) return
+  if (!canBuy.value) return
   cartStore.addToCart(props.product, 1)
   added.value = true
   setTimeout(() => { added.value = false }, 1500)
@@ -130,14 +153,13 @@ const isNewProduct = computed(() => {
   return new Date(props.product.createdAt) > sevenDaysAgo
 })
 
-// One badge, by priority: sold out is handled by the overlay, so here we rank
-// used > new. There were also FEATURED and BEST SELLER branches keyed on
-// product.featured / product.popular / product.quantitySold — the API has never
-// returned any of those fields, so neither badge could ever render. Removed
-// rather than left as decoration; re-add them alongside the backing fields.
+// One tag, by priority. Each state is carried by words as well as colour.
 const badge = computed(() => {
-  if (props.product.condition === 'used') return { label: 'USED', class: 'bg-orange-500 text-white' }
-  if (props.product.condition === 'new' && isNewProduct.value) return { label: 'NEW', class: 'bg-green-500 text-white' }
+  const { inStock, totalStock } = props.product
+  if (!inStock) return { label: 'Sold out', class: 'bg-gray-100 text-gray-600' }
+  if (totalStock <= LOW_STOCK_AT) return { label: `Only ${totalStock} left`, class: 'bg-yellow-100 text-yellow-900' }
+  if (saving.value) return { label: 'Price drop', class: 'bg-green-100 text-[#006B40]' }
+  if (isNewProduct.value) return { label: 'Just in', class: 'bg-gray-100 text-gray-800' }
   return null
 })
 </script>

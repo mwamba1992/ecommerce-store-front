@@ -194,10 +194,12 @@ Every product, category and brand page is SEO-ready automatically; nothing is co
 | `SITE_URL` | Public origin used in canonicals, Open Graph and the sitemap. Default `https://store.mwendavano.com`. |
 | `NUXT_SEO_AUDIT_TOKEN` | Secret required by `/admin/seo`. The report is disabled in production until this is set. |
 | `NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console "HTML tag" verification code. |
+| `NUXT_PUBLIC_HERO_IMAGE` | Optional photograph behind the home page banner, e.g. `/hero.jpg` placed in `public/`. |
+| `NUXT_PUBLIC_MOCK_MERCHANDISING` | Design preview only. `true` fills ratings, reviews and previous prices with sample values. Leave unset in production: it would publish invented reviews and discounts. |
 
 ### Optional catalogue fields
 
-If `GET /items/storefront` starts returning `seoTitle`, `metaDescription`, `shortDescription`, `model` or `updatedAt`, the storefront uses them (overriding the generated title/description, and adding `lastmod` to the sitemap). Until then the generated defaults apply.
+If `GET /items/storefront` returns `images`, `ratingAverage`, `ratingCount`, `previousPrice`, `seoTitle`, `metaDescription`, `shortDescription`, `model` or `updatedAt`, the storefront uses them: a photo gallery, stars, a "save" line, overrides for the generated title and description, and `lastmod` in the sitemap. Each one is optional and has a default when absent.
 
 ### After deploying
 

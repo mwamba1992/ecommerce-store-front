@@ -1,246 +1,187 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
-    <!-- Product Detail -->
-    <div v-if="product" class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-      <!-- Product Image -->
-      <div class="sticky top-20 h-fit">
-        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden aspect-square border border-gray-200 shadow-lg">
-          <img
-            v-if="product.imageUrl"
-            :src="productImage(product.imageUrl, 'detail')"
+  <div class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+    <template v-if="product">
+      <Breadcrumbs :crumbs="crumbs" class="mb-5" />
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
+        <!-- Gallery -->
+        <div class="lg:sticky lg:top-36 h-fit">
+          <ProductGallery
+            :images="images"
             :alt="productImageAlt(product)"
-            :width="imageSize(product.imageUrl, 'detail')?.width"
-            :height="imageSize(product.imageUrl, 'detail')?.height"
-            fetchpriority="high"
-            class="w-full h-full object-contain p-4 sm:p-6"
-          />
-          <div v-else class="w-full h-full flex items-center justify-center">
-            <svg class="w-32 h-32 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
+            :tint="tintFor(product.id)"
+            :initial="initialOf(productName(product))"
+            :dimmed="!product.inStock"
+          >
+            <!-- Condition, on the photo itself: the first thing a shopper should know -->
+            <span
+              class="absolute top-4 left-4 px-3 py-1 rounded-md text-sm font-semibold"
+              :class="product.condition === 'used' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-gray-300'"
+            >
+              {{ product.condition === 'used' ? 'Used' : 'New' }}
+            </span>
+
+            <button
+              type="button"
+              @click="wishlistStore.toggleWishlist(product)"
+              class="absolute top-3 right-3 w-11 h-11 rounded-full shadow-card flex items-center justify-center transition-colors"
+              :class="saved ? 'bg-red-50 text-red-500' : 'bg-white text-gray-500 hover:text-red-500'"
+              :aria-label="saved ? 'Remove from wishlist' : 'Add to wishlist'"
+              :aria-pressed="saved"
+            >
+              <svg class="w-5 h-5" :fill="saved ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+            </button>
+          </ProductGallery>
         </div>
-      </div>
 
-      <!-- Product Info -->
-      <div>
-        <Breadcrumbs :crumbs="crumbs" class="mb-6" />
-
-        <!-- Product Name -->
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-tight">
-          {{ productName(product) }}
-        </h1>
-
-        <!-- Product Code & Badges -->
-        <div class="flex flex-wrap items-center gap-3 mb-6">
-          <p v-if="product.code" class="text-sm font-mono text-gray-500 bg-gray-100 px-3 py-1 rounded">
-            SKU: {{ product.code }}
+        <!-- Buying column: title, price, availability, trust, then the actions -->
+        <div>
+          <p class="flex items-center gap-3">
+            <span class="px-2.5 py-0.5 rounded text-sm font-semibold" :class="product.condition === 'used' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-gray-300'">
+              {{ product.condition === 'used' ? 'Used' : 'New' }}
+            </span>
+            <NuxtLink v-if="brand" :to="brandPath(brand)" class="kicker hover:text-gray-900 transition-colors">{{ brand.label }}</NuxtLink>
           </p>
 
-          <!-- Condition Badge -->
-          <span
-            v-if="product.condition"
-            :class="[
-              'inline-flex items-center px-3 py-1 rounded-full text-xs font-bold',
-              product.condition === 'new'
-                ? 'bg-green-100 text-green-800'
-                : 'bg-orange-100 text-orange-800'
-            ]"
-          >
-            {{ product.condition === 'new' ? '✨ New' : '♻️ Used' }}
-          </span>
+          <h1 class="title text-3xl sm:text-4xl leading-tight mt-2 mb-4">
+            {{ productName(product) }}
+          </h1>
 
-          <!-- Category -->
-          <NuxtLink v-if="category" :to="categoryPath(category)" class="inline-block text-xs font-bold bg-yellow-100 text-yellow-800 hover:bg-yellow-200 px-3 py-1 rounded-full transition-colors">
-            {{ category.label }}
-          </NuxtLink>
+          <ProductStars v-if="rating" :average="rating.average" :count="rating.count" class="mb-4 !text-base" />
 
-          <!-- Brand -->
-          <NuxtLink v-if="brand" :to="brandPath(brand)" class="inline-block text-xs font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors">
-            {{ brand.label }}
-          </NuxtLink>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2" :class="saving ? 'mb-2' : 'mb-5'">
+            <p v-if="hasPrice(product)" class="font-semibold tracking-tight" :class="saving ? 'text-[#006B40]' : 'text-gray-900'"><span class="text-sm font-medium align-top relative top-1 mr-1">TZS</span><span class="text-4xl leading-none">{{ formatPrice(product.sellingPrice) }}</span></p>
+            <p v-else class="text-2xl font-semibold text-gray-900">Price on request</p>
 
-          <!-- Stock Badge -->
-          <span
-            v-if="product.totalStock !== undefined"
-            :class="[
-              'inline-flex items-center px-3 py-1 rounded-full text-xs font-bold',
-              product.inStock && product.totalStock > 10
-                ? 'bg-green-100 text-green-800'
-                : product.inStock && product.totalStock > 0
-                ? 'bg-yellow-100 text-yellow-800'
-                : 'bg-red-100 text-red-800'
-            ]"
-          >
-            {{ product.inStock ? `${product.totalStock} in stock` : 'Out of Stock' }}
-          </span>
-        </div>
-
-        <!-- Price -->
-        <div class="mb-6 p-4 bg-gray-50 rounded-xl border-2 border-yellow-400">
-          <p class="text-xs text-gray-600 mb-1">Price</p>
-          <span v-if="hasPrice(product)" class="text-3xl sm:text-4xl font-black text-gray-900">
-            TZS {{ formatPrice(product.sellingPrice) }}
-          </span>
-          <span v-else class="text-xl sm:text-2xl font-black text-gray-900">
-            Price on request
-          </span>
-        </div>
-
-        <!-- Description -->
-        <div class="mb-6 p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
-          <h2 class="text-lg font-bold text-gray-900 mb-2 flex items-center">
-            <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Description
-          </h2>
-          <p v-for="(paragraph, index) in description" :key="index" class="text-gray-700 leading-relaxed text-sm mb-2 last:mb-0">
-            {{ paragraph }}
-          </p>
-        </div>
-
-        <!-- Quantity Selector -->
-        <div class="mb-5">
-          <label class="block text-sm font-bold text-gray-900 mb-2">Quantity</label>
-          <div class="flex items-center space-x-3">
-            <button
-              @click="decrementQuantity"
-              class="w-10 h-10 rounded-lg bg-gray-900 hover:bg-yellow-400 text-white hover:text-black flex items-center justify-center transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="quantity <= 1"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4" />
-              </svg>
-            </button>
-            <span class="text-2xl font-bold w-12 text-center text-gray-900">{{ quantity }}</span>
-            <button
-              @click="incrementQuantity"
-              class="w-10 h-10 rounded-lg bg-gray-900 hover:bg-yellow-400 text-white hover:text-black flex items-center justify-center transition-all duration-300"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border" :class="availability.class">
+              <span class="w-1.5 h-1.5 rounded-full" :class="availability.dot"></span>
+              {{ availability.label }}
+            </span>
           </div>
-        </div>
+          <p v-if="saving" class="mb-5 text-[15px]">
+            <span class="font-semibold text-[#006B40]">Save TZS {{ formatPrice(saving.amount) }}</span>
+            <span class="text-gray-600"> · Previous price: TZS {{ formatPrice(saving.previous) }}</span>
+          </p>
 
-        <!-- Add to Cart Button -->
-        <div class="flex gap-3 mb-6">
-          <button
-            @click="addToCart"
-            :disabled="!product.inStock"
-            :class="[
-              'flex-1 flex items-center justify-center space-x-2 py-3 px-6 rounded-lg text-base font-bold transition-all duration-300 shadow-lg',
-              product.inStock
-                ? 'bg-yellow-400 hover:bg-yellow-500 text-black hover:scale-105 hover:shadow-xl'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            ]"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span>{{ product.inStock ? 'Add to Cart' : 'Out of Stock' }}</span>
-          </button>
-        </div>
+          <!-- Why it is safe to buy here, said as benefits, where the decision is made -->
+          <ul class="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
+            <li v-for="tile in trust" :key="tile.title" class="rounded-card bg-white p-3 sm:p-4">
+              <svg class="w-5 h-5 text-gray-900 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tile.icon" /></svg>
+              <p class="text-sm sm:text-base font-medium text-gray-900 leading-tight">{{ tile.title }}</p>
+              <p class="text-xs sm:text-sm text-gray-500 leading-snug mt-0.5">{{ tile.body }}</p>
+            </li>
+          </ul>
 
-        <!-- WhatsApp Order -->
-        <div class="border-t border-gray-200 pt-6">
-          <div class="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-lg border border-green-200">
-            <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              Quick WhatsApp Order
-            </h3>
-            <p class="text-xs text-gray-700 mb-3">
-              Order directly via WhatsApp for instant confirmation
-            </p>
-            <div class="flex gap-2">
-              <button
-                @click="shareOnWhatsApp"
-                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg font-bold transition-all duration-300 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg text-sm"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                </svg>
-                <span>Order via WhatsApp</span>
+          <!-- Quantity and add to cart -->
+          <div class="flex items-stretch gap-3 mb-3">
+            <div class="flex items-center rounded-lg bg-white border border-gray-300" role="group" aria-label="Quantity">
+              <button type="button" @click="decrementQuantity" :disabled="quantity <= 1" class="w-12 h-[52px] flex items-center justify-center text-gray-700 disabled:text-gray-300" aria-label="Decrease quantity">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" /></svg>
               </button>
-              <button
-                @click="copyWhatsAppLink"
-                class="bg-gray-900 hover:bg-yellow-400 text-white hover:text-black px-4 py-2.5 rounded-lg transition-all duration-300 shadow-md"
-                title="Copy order link"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
+              <span class="w-8 text-center font-semibold text-gray-900" aria-live="polite">{{ quantity }}</span>
+              <button type="button" @click="incrementQuantity" :disabled="quantity >= maxQuantity" class="w-12 h-[52px] flex items-center justify-center text-gray-700 disabled:text-gray-300" aria-label="Increase quantity">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
               </button>
             </div>
+
+            <button type="button" @click="addToCart" :disabled="!canBuy" class="btn-primary flex-1">
+              <svg v-if="added" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+              {{ buyLabel }}
+            </button>
           </div>
+
+          <div class="flex gap-3 mb-8">
+            <button type="button" @click="shareOnWhatsApp" class="btn-secondary flex-1 !text-green-700">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              Order on WhatsApp
+            </button>
+            <button type="button" @click="copyWhatsAppLink" class="btn-secondary !px-4" :aria-label="copied ? 'Order link copied' : 'Copy order link'">
+              <svg v-if="copied" class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+            </button>
+          </div>
+
+          <!-- Description -->
+          <section class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">About this product</h2>
+            <p v-for="(paragraph, index) in description" :key="index" class="text-gray-700 leading-relaxed mb-2 last:mb-0">
+              {{ paragraph }}
+            </p>
+          </section>
+
+          <!-- Details -->
+          <section class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Product details</h2>
+            <dl class="card divide-y divide-gray-100 text-[15px]">
+              <div v-for="row in details" :key="row.label" class="flex justify-between gap-4 px-5 py-3">
+                <dt class="text-gray-500">{{ row.label }}</dt>
+                <dd class="font-semibold text-gray-900 text-right">
+                  <NuxtLink v-if="row.to" :to="row.to" class="text-gray-900 underline">{{ row.value }}</NuxtLink>
+                  <template v-else>{{ row.value }}</template>
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- Delivery, payment, returns -->
+          <section>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Delivery, payment and returns</h2>
+            <ul class="space-y-3 text-[15px] text-gray-700 leading-relaxed">
+              <li><strong class="text-gray-900">Delivery:</strong> same day or next day within Dar es Salaam, and 2–5 business days to other regions of Tanzania. <NuxtLink to="/shipping" class="text-gray-900 font-semibold underline">Shipping information</NuxtLink></li>
+              <li><strong class="text-gray-900">Payment:</strong> cash on delivery or mobile money (M-Pesa, Tigo Pesa, Airtel Money).</li>
+              <li><strong class="text-gray-900">Returns:</strong> within 7 days if the item is unused and in its original packaging. <NuxtLink to="/returns" class="text-gray-900 font-semibold underline">Returns policy</NuxtLink></li>
+              <li><strong class="text-gray-900">Questions:</strong> message us on WhatsApp or call +255 789 947 608. <NuxtLink to="/contact" class="text-gray-900 font-semibold underline">Contact us</NuxtLink></li>
+            </ul>
+          </section>
         </div>
       </div>
-    </div>
 
-    <!-- Error State -->
+      <!-- Buy bar (phones): price and the action stay in reach while reading -->
+      <div class="md:hidden fixed bottom-[60px] inset-x-0 z-30 bg-white border-t border-gray-100 shadow-nav px-4 py-2.5 flex items-center gap-3">
+        <div class="min-w-0">
+          <p class="text-[11px] text-gray-500 leading-none mb-0.5">{{ availability.label }}</p>
+          <p class="font-semibold text-gray-900 truncate">{{ hasPrice(product) ? `TZS ${formatPrice(product.sellingPrice)}` : 'Price on request' }}</p>
+        </div>
+        <button type="button" @click="addToCart" :disabled="!canBuy" class="btn-primary flex-1 !min-h-[46px] !shadow-none">{{ buyLabel }}</button>
+      </div>
+    </template>
+
+    <!-- Not found -->
     <div v-else class="text-center py-20">
-      <div class="max-w-md mx-auto">
-        <svg class="w-32 h-32 mx-auto text-gray-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h1 class="text-2xl font-bold text-gray-900 mb-3">Product Not Found</h1>
-        <p class="text-gray-600 mb-8">The product you're looking for doesn't exist or has been removed.</p>
-        <NuxtLink to="/products" class="inline-flex items-center justify-center px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Browse All Products
-        </NuxtLink>
-      </div>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-3">Product Not Found</h1>
+      <p class="text-gray-600 mb-8">The product you're looking for doesn't exist or has been removed.</p>
+      <NuxtLink to="/products" class="btn-primary">Browse all products</NuxtLink>
     </div>
 
-    <!-- Product details and buying information -->
-    <div v-if="product" class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-      <section>
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Product details</h2>
-        <dl class="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white text-sm">
-          <div v-for="row in details" :key="row.label" class="flex justify-between gap-4 px-5 py-3">
-            <dt class="text-gray-500">{{ row.label }}</dt>
-            <dd class="font-semibold text-gray-900 text-right">
-              <NuxtLink v-if="row.to" :to="row.to" class="text-yellow-600 hover:underline">{{ row.value }}</NuxtLink>
-              <template v-else>{{ row.value }}</template>
-            </dd>
-          </div>
-        </dl>
-      </section>
+    <!-- Reviews -->
+    <ProductReviews v-if="product" :product="product" />
 
-      <section>
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Delivery, payment and returns</h2>
-        <ul class="space-y-3 text-sm text-gray-700 leading-relaxed">
-          <li><strong class="text-gray-900">Delivery:</strong> same day or next day within Dar es Salaam, and 2–5 business days to other regions of Tanzania. <NuxtLink to="/shipping" class="text-yellow-600 font-semibold hover:underline">Shipping information</NuxtLink></li>
-          <li><strong class="text-gray-900">Payment:</strong> cash on delivery or mobile money (M-Pesa, Tigo Pesa, Airtel Money).</li>
-          <li><strong class="text-gray-900">Returns:</strong> within 7 days if the item is unused and in its original packaging. <NuxtLink to="/returns" class="text-yellow-600 font-semibold hover:underline">Returns policy</NuxtLink></li>
-          <li><strong class="text-gray-900">Questions:</strong> message us on WhatsApp or call +255 789 947 608. <NuxtLink to="/contact" class="text-yellow-600 font-semibold hover:underline">Contact us</NuxtLink></li>
-        </ul>
-      </section>
-    </div>
-
-    <!-- Related Products -->
-    <section v-if="relatedProducts.length > 0" class="mt-16 border-t-2 border-gray-200 pt-16">
-      <div class="text-center mb-10">
-        <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-3">
-          Related <span class="text-yellow-500">Products</span>
-        </h2>
-        <p class="text-gray-600">You might also like these products</p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <!-- Similar products -->
+    <section v-if="relatedProducts.length > 0" class="mt-14">
+      <h2 class="text-[22px] leading-8 font-semibold text-gray-900 mb-5">Similar products</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         <ProductCard v-for="relatedProduct in relatedProducts" :key="relatedProduct.id" :product="relatedProduct" />
       </div>
     </section>
+
+    <!-- Recently viewed: this browser only, so it renders after hydration -->
+    <ClientOnly>
+      <section v-if="recentlyViewed.length > 0" class="mt-14">
+        <h2 class="text-[22px] leading-8 font-semibold text-gray-900 mb-5">Recently viewed</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          <ProductCard v-for="viewed in recentlyViewed" :key="viewed.id" :product="viewed" />
+        </div>
+      </section>
+    </ClientOnly>
+
+    <!-- Room for the phone buy bar -->
+    <div v-if="product" class="h-16 md:hidden"></div>
   </div>
 </template>
 
 <script setup>
 import { useCartStore } from '~/stores/cart'
+import { useWishlistStore } from '~/stores/wishlist'
 import {
   brandPath,
   breadcrumbJsonLd,
@@ -250,10 +191,13 @@ import {
   descriptionParagraphs,
   hasPrice,
   productImageAlt,
+  productImages,
   productJsonLd,
   productMetaDescription,
   productName,
   productPath,
+  productRating,
+  productSaving,
   productSummary,
   productTitle
 } from '#shared/utils/seo'
@@ -261,8 +205,9 @@ import {
 const route = useRoute()
 const siteUrl = useSiteUrl()
 const { baseURL } = useApi()
-const { formatPrice, productImage, imageSize } = useFormat()
+const { formatPrice, productImage } = useFormat()
 const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
 
 const quantity = ref(1)
 
@@ -316,15 +261,57 @@ const description = computed(() => {
 const details = computed(() => [
   brand.value && { label: 'Brand', value: brand.value.label, to: brandPath(brand.value) },
   product.value.model && { label: 'Model', value: product.value.model },
-  product.value.code && { label: 'SKU', value: product.value.code },
   category.value && { label: 'Category', value: category.value.label, to: categoryPath(category.value) },
   { label: 'Condition', value: product.value.condition === 'used' ? 'Used' : 'New' },
   { label: 'Availability', value: product.value.inStock ? 'In stock' : 'Out of stock' },
   { label: 'Price', value: hasPrice(product.value) ? `TZS ${formatPrice(product.value.sellingPrice)}` : 'On request' }
 ].filter(Boolean))
 
+const images = computed(() => productImages(product.value))
+const rating = computed(() => productRating(product.value))
+const saving = computed(() => productSaving(product.value))
+const saved = computed(() => wishlistStore.isInWishlist(product.value.id))
+
+// At or below this many units, say how many are left.
+const LOW_STOCK_AT = 3
+
+// Each state is carried by its wording, not only its colour.
+const availability = computed(() => {
+  const { inStock, totalStock } = product.value
+  if (!inStock) return { label: 'Out of stock', class: 'bg-white text-gray-500 border-gray-200', dot: 'bg-gray-400' }
+  if (totalStock <= LOW_STOCK_AT) return { label: `Only ${totalStock} left`, class: 'bg-yellow-50 text-yellow-800 border-yellow-200', dot: 'bg-yellow-500' }
+  return { label: 'In stock', class: 'bg-green-50 text-[#006B40] border-green-200', dot: 'bg-green-600' }
+})
+
+// Stated on the shipping, help and returns pages.
+const trust = [
+  { title: 'Fast delivery', body: 'Same or next day in Dar', icon: 'M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0' },
+  { title: 'Pay on delivery', body: 'Cash or mobile money', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' },
+  { title: '7-day returns', body: 'Unused, original packaging', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' }
+]
+
+// A product with no price cannot be ordered through the cart, only asked about.
+const canBuy = computed(() => product.value.inStock && hasPrice(product.value))
+const maxQuantity = computed(() => Math.max(1, product.value.totalStock))
+
+const added = ref(false)
+const copied = ref(false)
+const buyLabel = computed(() => {
+  if (!product.value.inStock) return 'Out of stock'
+  if (!hasPrice(product.value)) return 'Price on request'
+  return added.value ? 'Added to cart' : 'Add to cart'
+})
+
+const { items: recentItems, load: loadRecent, record: recordViewed } = useRecentlyViewed()
+const recentlyViewed = computed(() => recentItems.value.filter(p => p.id !== product.value?.id).slice(0, 4))
+
+onMounted(() => {
+  if (product.value) recordViewed(product.value)
+  else loadRecent()
+})
+
 const incrementQuantity = () => {
-  quantity.value++
+  if (quantity.value < maxQuantity.value) quantity.value++
 }
 
 const decrementQuantity = () => {
@@ -335,7 +322,8 @@ const decrementQuantity = () => {
 
 const addToCart = () => {
   cartStore.addToCart(product.value, quantity.value)
-  alert(`${quantity.value} × ${product.value.name} added to cart!`)
+  added.value = true
+  setTimeout(() => { added.value = false }, 1800)
   quantity.value = 1
 }
 
@@ -367,10 +355,10 @@ const copyWhatsAppLink = async () => {
 
   try {
     await navigator.clipboard.writeText(whatsappUrl)
-    alert('Order link copied to clipboard!')
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 1800)
   } catch (err) {
     console.error('Failed to copy link:', err)
-    alert('Failed to copy link')
   }
 }
 

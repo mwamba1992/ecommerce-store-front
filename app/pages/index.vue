@@ -1,265 +1,150 @@
 <template>
   <div>
-    <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      <!-- Animated Background Elements -->
-      <div class="absolute inset-0">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(234,179,8,0.1),transparent_50%)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(234,179,8,0.05),transparent_50%)]"></div>
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
-      </div>
+    <!-- Banner: a dark panel with the pitch on the left and one product to buy on the right -->
+    <section class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div class="relative rounded-tile overflow-hidden bg-gray-900 text-white">
+        <img v-if="heroImage" :src="heroImage" alt="" class="absolute inset-0 w-full h-full object-cover" />
+        <!-- Keeps the copy legible over any photograph -->
+        <div v-if="heroImage" class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/70 to-transparent"></div>
 
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16 relative">
-        <div class="text-center">
-          <!-- Premium Logo Display -->
-          <div class="mb-4 sm:mb-6 animate-fade-in">
-            <h1 aria-label="Global Authentic TZ">
-            <span class="relative inline-block">
-              <!-- Crown positioned above 'g' -->
-              <svg class="w-8 h-6 sm:w-10 sm:h-8 md:w-14 md:h-10 lg:w-16 lg:h-12 text-yellow-400 absolute -top-5 sm:-top-7 md:-top-9 lg:-top-11 left-0 drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]" fill="currentColor" viewBox="0 0 640 512">
-                <path d="M528 448H112c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm64-320c-26.5 0-48 21.5-48 48 0 7.1 1.6 13.7 4.4 19.8L476 239.2c-15.4 9.2-35.3 4-44.2-11.6L350.3 85C361 76.2 368 63 368 48c0-26.5-21.5-48-48-48s-48 21.5-48 48c0 15 7 28.2 17.7 37l-81.5 142.6c-8.9 15.6-28.9 20.8-44.2 11.6l-72.3-43.4c2.7-6 4.4-12.7 4.4-19.8 0-26.5-21.5-48-48-48S0 149.5 0 176s21.5 48 48 48c2.6 0 5.2-.4 7.7-.8L128 416h384l72.3-192.8c2.5.4 5.1.8 7.7.8 26.5 0 48-21.5 48-48s-21.5-48-48-48z"/>
-              </svg>
-              <span class="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white lowercase mb-2 sm:mb-3" style="font-family: 'Arial Black', Arial, sans-serif; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(234, 179, 8, 0.3);">
-                global
-              </span>
-            </span>
-            <span class="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-yellow-400 uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-4 sm:mb-6" style="font-family: Arial, sans-serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
-              Authentic TZ
-            </span>
+        <div class="relative flex flex-col lg:flex-row lg:items-center gap-8 p-6 sm:p-10">
+          <div class="flex-1 lg:max-w-xl">
+            <p class="mb-4">Global Authentic TZ · Kariakoo, Dar es Salaam</p>
+            <h1 class="font-serif font-semibold tracking-tight text-4xl sm:text-[56px] leading-[1.1] mb-6">
+              Original smart watches, earbuds and gadgets in Tanzania
             </h1>
-            <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-4 sm:mb-6"></div>
-          </div>
-
-          <!-- Tagline -->
-          <p class="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 text-gray-200 font-light tracking-wide max-w-3xl mx-auto px-4">
-            TRUE GLOBAL GOODS, RIGHT HERE IN TZ
-          </p>
-
-          <!-- CTA Buttons -->
-          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
-            <NuxtLink to="/products" class="w-full sm:w-auto group relative inline-flex items-center justify-center px-8 sm:px-10 py-3 sm:py-4 bg-yellow-400 text-black font-bold rounded-lg overflow-hidden transition-all duration-300 hover:bg-yellow-500 hover:scale-105 shadow-[0_0_30px_rgba(234,179,8,0.3)] hover:shadow-[0_0_40px_rgba(234,179,8,0.5)]">
-              <span class="relative z-10 flex items-center">
-                Shop Now
-                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
-            </NuxtLink>
-            <NuxtLink to="/about" class="w-full sm:w-auto inline-flex items-center justify-center px-8 sm:px-10 py-3 sm:py-4 border-2 border-yellow-400 text-yellow-400 font-bold rounded-lg hover:bg-yellow-400 hover:text-black transition-all duration-300">
-              Learn More
-            </NuxtLink>
-          </div>
-
-          <!-- Trust Badges -->
-          <div class="mt-6 sm:mt-8 flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm text-gray-300 px-4">
-            <div class="flex items-center space-x-2">
-              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-              <span class="font-semibold">100% Authentic</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
-              </svg>
-              <span class="font-semibold">Fast Delivery</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-              <span class="font-semibold">Verified Seller</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Promotional Banner Section -->
-    <section class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 py-8 sm:py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-          <!-- Left Side - Text Content -->
-          <div class="text-center md:text-left flex-1">
-            <div class="inline-block bg-black text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3">
-              LIMITED TIME OFFER
-            </div>
-            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-black mb-2">
-              Get Up to 30% OFF
-            </h2>
-            <p class="text-base sm:text-lg text-black/80 font-semibold mb-4">
-              On Selected International Brands
+            <p class="text-lg sm:text-xl leading-relaxed max-w-lg mb-8">
+              {{ data.total }} products from {{ brands.length }} global brands, with prices in TZS and delivery across the country.
             </p>
-            <NuxtLink
-              to="/products"
-              class="inline-flex items-center px-6 py-3 bg-black text-yellow-400 font-bold rounded-lg hover:bg-gray-900 transition-all duration-300 shadow-lg"
-            >
-              Shop Sale Items
-              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </NuxtLink>
-          </div>
-
-          <!-- Right Side - Decorative Elements -->
-          <div class="hidden md:flex items-center gap-4">
-            <div class="bg-black/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-              <div class="text-4xl font-black text-black mb-1">30%</div>
-              <div class="text-sm font-bold text-black/80">MAX DISCOUNT</div>
-            </div>
-            <div class="bg-black/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-              <div class="text-4xl font-black text-black mb-1">100+</div>
-              <div class="text-sm font-bold text-black/80">PRODUCTS</div>
+            <div class="flex flex-wrap gap-3">
+              <NuxtLink to="/products" class="inline-flex items-center justify-center h-12 px-6 rounded-md border border-white text-white font-semibold hover:bg-white hover:text-gray-900 transition-colors">
+                Shop all products
+              </NuxtLink>
+              <a href="https://wa.me/255789947608" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-12 px-6 rounded-md text-white underline hover:no-underline">
+                Order on WhatsApp
+              </a>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Special Deals Banner -->
-    <section class="bg-gray-100 py-4">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm sm:text-base">
-          <div class="flex items-center gap-2 text-gray-700">
-            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-            </svg>
-            <span class="font-semibold">Flash Sales Daily</span>
-          </div>
-          <div class="flex items-center gap-2 text-gray-700">
-            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
-            </svg>
-            <span class="font-semibold">New Arrivals Weekly</span>
-          </div>
-          <div class="flex items-center gap-2 text-gray-700">
-            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-            </svg>
-            <span class="font-semibold">Same Day Delivery</span>
+          <!-- Featured product -->
+          <div v-if="featured" class="w-full sm:w-[288px] lg:ml-auto flex-shrink-0">
+            <ProductCard :product="featured" />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Featured Products -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16">
-      <div class="text-center mb-8 sm:mb-10">
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3">
-          Featured <span class="text-yellow-500">Products</span>
-        </h2>
-        <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto mb-4 px-4">
-          Discover our carefully curated selection of authentic international products
-        </p>
-        <div class="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
+    <!-- What buying here is like: every line is the store's stated policy -->
+    <section class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+      <ul class="card grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-100">
+        <li v-for="promise in promises" :key="promise.title" class="flex items-start gap-3 p-4 sm:p-5">
+          <span class="w-10 h-10 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="promise.icon" /></svg>
+          </span>
+          <span>
+            <span class="block text-base font-medium text-gray-900">{{ promise.title }}</span>
+            <span class="block text-sm text-gray-500 leading-snug mt-0.5">{{ promise.body }}</span>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Category rail -->
+    <section class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <div class="flex items-end justify-between mb-5">
+        <h2 class="text-[22px] leading-8 font-semibold text-gray-900">Shop by category</h2>
+        <NuxtLink to="/categories" class="text-sm font-semibold text-gray-900 underline">See all</NuxtLink>
       </div>
-
-      <!-- Products Grid -->
-      <template v-if="products.length > 0">
-        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          <ProductCard v-for="product in products" :key="product.id" :product="product" />
-        </div>
-
-        <!-- View All (below grid, centered) -->
-        <div class="flex justify-center mt-10 sm:mt-12">
-          <NuxtLink to="/products" class="inline-flex items-center px-8 py-3.5 bg-gray-900 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-yellow-400 hover:text-black transition-all duration-300 shadow-lg">
-            View All Products
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+      <ul class="flex gap-4 sm:gap-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
+        <li v-for="category in categories" :key="category.id" class="snap-start flex-shrink-0">
+          <NuxtLink :to="categoryPath(category)" class="group flex flex-col items-center w-28 sm:w-32 text-center">
+            <span class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center transition-shadow group-hover:shadow-lift" :style="{ backgroundColor: category.cover ? '#fff' : tintFor(category.id) }">
+              <img v-if="category.cover" :src="productImage(category.cover, 'thumb')" alt="" width="200" height="200" loading="lazy" class="w-full h-full object-contain p-2.5" />
+              <span v-else class="text-2xl font-semibold text-gray-900/30" aria-hidden="true">{{ initialOf(category.label) }}</span>
+            </span>
+            <span class="mt-3 text-base text-gray-900 leading-tight">{{ category.label }}</span>
+            <span class="text-sm text-gray-500">{{ category.count }} {{ category.count === 1 ? 'product' : 'products' }}</span>
           </NuxtLink>
-        </div>
-      </template>
-
-      <!-- Empty State -->
-      <div v-else class="text-center py-16">
-        <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">No products available</h3>
-        <p class="text-gray-600">Check back soon for amazing deals!</p>
-      </div>
+        </li>
+      </ul>
     </section>
 
-    <!-- Categories and brands: plain links into every part of the catalogue -->
-    <section class="bg-gray-50 py-12 sm:py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Shop by Category</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          <NuxtLink
-            v-for="category in categories"
-            :key="category.id"
-            :to="categoryPath(category)"
-            class="bg-white rounded-lg p-6 text-center hover:shadow-lg transition-shadow"
-          >
-            <h3 class="font-semibold text-gray-900">{{ category.label }}</h3>
-            <p class="text-sm text-gray-600">{{ category.count }} product{{ category.count === 1 ? '' : 's' }}</p>
-          </NuxtLink>
-        </div>
+    <!-- Product rows: newest first, then one row per main category -->
+    <div class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-12">
+      <ProductRail v-if="products.length > 0" title="New arrivals" to="/products" :products="products" />
+      <ProductRail v-for="rail in data.rails" :key="rail.category.id" :title="rail.category.label" :to="categoryPath(rail.category)" :products="rail.products" />
+    </div>
 
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mt-12 mb-6 sm:mb-8 text-center">Shop by Brand</h2>
-        <div class="flex flex-wrap justify-center gap-3">
-          <NuxtLink
-            v-for="brand in brands"
-            :key="brand.id"
-            :to="brandPath(brand)"
-            class="px-5 py-2.5 bg-white rounded-full border border-gray-200 text-sm font-semibold text-gray-800 hover:border-yellow-400 hover:text-yellow-600 transition-colors"
-          >
+    <!-- Brands -->
+    <section class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 mt-14">
+      <h2 class="text-[22px] leading-8 font-semibold text-gray-900 mb-5">Shop by brand</h2>
+      <ul class="flex flex-wrap gap-2.5">
+        <li v-for="brand in brands.slice(0, 10)" :key="brand.id">
+          <NuxtLink :to="brandPath(brand)" class="chip !bg-white border border-gray-200 hover:border-gray-900">
             {{ brand.label }}
+            <span class="text-gray-400">{{ brand.count }}</span>
           </NuxtLink>
-        </div>
-      </div>
+        </li>
+        <li v-if="brands.length > 10">
+          <NuxtLink to="/brands" class="chip !bg-transparent underline">All {{ brands.length }} brands</NuxtLink>
+        </li>
+      </ul>
     </section>
 
-    <!-- Features Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-        <div class="text-center">
-          <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">Fast Delivery</h3>
-          <p class="text-gray-600">Quick and reliable shipping to your doorstep</p>
+    <!-- Help choosing -->
+    <section class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 my-14">
+      <div class="rounded-tile bg-gray-900 text-white p-8 sm:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h2 class="text-2xl font-semibold mb-2">Not sure which one to pick?</h2>
+          <p class="text-gray-300 max-w-xl">Tell us your budget and what you need it for. We reply on WhatsApp, usually within a few hours.</p>
         </div>
-
-        <div class="text-center">
-          <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">Secure Payment</h3>
-          <p class="text-gray-600">Safe and secure payment processing</p>
-        </div>
-
-        <div class="text-center">
-          <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">Quality Products</h3>
-          <p class="text-gray-600">Carefully curated selection of top-quality items</p>
-        </div>
+        <a href="https://wa.me/255789947608" target="_blank" rel="noopener noreferrer" class="btn-secondary flex-shrink-0">Chat on WhatsApp</a>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { SITE, brandPath, categoryPath, collectBrands, collectCategories, websiteJsonLd } from '#shared/utils/seo'
+import { SITE, brandPath, categoryPath, collectBrands, collectCategories, hasPrice, websiteJsonLd } from '#shared/utils/seo'
 
 const siteUrl = useSiteUrl()
 
 // Server-rendered: fetched on the server for fast first paint + SEO
+const { productImage } = useFormat()
+
 const data = await useCatalogue('home', all => ({
+  total: all.length,
+  // The catalogue arrives newest first.
   products: all.slice(0, 8),
-  categories: collectCategories(all),
+  featured: all.find(p => p.imageUrl && p.inStock && hasPrice(p)) ?? null,
+  // Each category is pictured by one of its own products.
+  categories: collectCategories(all).map(category => ({
+    ...category,
+    cover: all.find(p => p.category?.id === category.id && p.imageUrl)?.imageUrl ?? null
+  })),
+  // A row for each of the three largest categories, buyable products first.
+  rails: collectCategories(all).slice(0, 3).map(category => ({
+    category,
+    products: all
+      .filter(p => p.category?.id === category.id)
+      .sort((a, b) => Number(b.inStock) - Number(a.inStock) || Number(Boolean(b.imageUrl)) - Number(Boolean(a.imageUrl)))
+      .slice(0, 8)
+  })),
   brands: collectBrands(all)
 }))
+
+const { heroImage } = useRuntimeConfig().public
+
+// The product on the banner: the newest one that can be bought and has a photo.
+const featured = computed(() => data.value.featured)
+
+// Stated on the shipping, help and returns pages; keep the three in step.
+const promises = [
+  { title: '100% authentic', body: 'Quality-checked before dispatch', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+  { title: 'Fast delivery', body: 'Same or next day in Dar, 2–5 days elsewhere', icon: 'M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0' },
+  { title: 'Pay on delivery', body: 'Cash or M-Pesa, Tigo Pesa, Airtel Money', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' },
+  { title: '7-day returns', body: 'Unused, in original packaging', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' }
+]
 
 const products = computed(() => data.value.products)
 const categories = computed(() => data.value.categories)

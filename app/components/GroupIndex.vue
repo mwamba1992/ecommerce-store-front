@@ -1,9 +1,9 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
+  <div class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
     <Breadcrumbs :crumbs="crumbs" class="mb-6" />
 
     <header class="mb-10 max-w-3xl">
-      <h1 class="text-3xl sm:text-4xl font-black text-gray-900 mb-3">{{ heading }}</h1>
+      <h1 class="title text-4xl sm:text-5xl mb-3">{{ heading }}</h1>
       <p class="text-gray-600 leading-relaxed">{{ intro }}</p>
     </header>
 
@@ -11,17 +11,23 @@
       <li v-for="group in groups" :key="group.path">
         <NuxtLink
           :to="group.path"
-          class="block h-full bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-xl hover:border-yellow-400 transition-all duration-300 p-5"
+          class="group flex items-center gap-4 h-full card p-4 transition-shadow duration-300 hover:shadow-lift"
         >
-          <h2 class="text-base font-bold text-gray-900 mb-1">{{ group.label }}</h2>
-          <p class="text-sm text-yellow-600 font-bold">{{ group.count }} product{{ group.count === 1 ? '' : 's' }}</p>
+          <span class="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0" :style="{ backgroundColor: group.cover ? '#fff' : tintFor(group.id) }">
+            <img v-if="group.cover" :src="productImage(group.cover, 'thumb')" alt="" width="200" height="200" loading="lazy" class="w-full h-full object-contain p-1" />
+            <span v-else class="text-xl font-semibold text-gray-900/30" aria-hidden="true">{{ initialOf(group.label) }}</span>
+          </span>
+          <span class="min-w-0">
+            <h2 class="text-base font-semibold text-gray-900 leading-tight">{{ group.label }}</h2>
+            <span class="text-sm text-gray-500">{{ group.count }} product{{ group.count === 1 ? '' : 's' }}</span>
+          </span>
         </NuxtLink>
       </li>
     </ul>
 
     <div v-else class="text-center py-20">
       <p class="text-gray-600 mb-8">Nothing to show here yet.</p>
-      <NuxtLink to="/products" class="inline-flex items-center justify-center px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all duration-300 shadow-lg">
+      <NuxtLink to="/products" class="btn-primary">
         Browse All Products
       </NuxtLink>
     </div>
@@ -30,6 +36,8 @@
 
 <script setup>
 // Shared body of /categories and /brands.
+const { productImage } = useFormat()
+
 defineProps({
   crumbs: { type: Array, required: true },
   heading: { type: String, required: true },

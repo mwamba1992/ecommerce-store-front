@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
+  <div class="max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
     <!-- Page Header -->
     <div class="mb-10 flex justify-between items-center">
       <div>
@@ -37,6 +37,8 @@
     </div>
 
     <!-- My Orders Section -->
+    <ReviewPrompts />
+
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 sm:p-8">
       <h2 class="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b-2 border-gray-100">
         My Orders

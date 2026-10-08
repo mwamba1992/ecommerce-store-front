@@ -103,16 +103,26 @@ export const jsonLdString = (data: unknown): string =>
 // ---------------------------------------------------------------------------
 
 // Named presets rather than raw transform strings at each call site, so image
-// sizing is a decision made once, here. The padded presets always come back at
+// sizing is a decision made once, here.
+//
+// Each one first trims the empty margin around the product, then fits it into
+// a fixed share of a white square. Source photos arrive with anything from no
+// margin to a product floating in the middle third; without the trim, cards in
+// the same row show products at wildly different sizes. The result is always
 // exactly the stated size, which is what lets <img> carry width and height.
+const framed = (size: number, format: string) => {
+  const inner = Math.round(size * 0.86)
+  return `e_trim:10/c_fit,w_${inner},h_${inner}/${format},q_auto,w_${size},h_${size},c_pad,b_white`
+}
+
 export const IMAGE_PRESETS = {
-  thumb: { transform: 'f_auto,q_auto,w_200,h_200,c_pad,b_white', width: 200, height: 200 },
-  small: { transform: 'f_auto,q_auto,w_300,h_300,c_fit', width: null, height: null },
-  card: { transform: 'f_auto,q_auto,w_800,h_800,c_pad,b_white', width: 800, height: 800 },
-  detail: { transform: 'f_auto,q_auto,w_1200,h_1200,c_pad,b_white', width: 1200, height: 1200 },
+  thumb: { transform: framed(200, 'f_auto'), width: 200, height: 200 },
+  small: { transform: framed(300, 'f_auto'), width: 300, height: 300 },
+  card: { transform: framed(800, 'f_auto'), width: 800, height: 800 },
+  detail: { transform: framed(1200, 'f_auto'), width: 1200, height: 1200 },
   // Link previews and structured data: a fixed JPEG, because scrapers do not
   // negotiate formats the way browsers do.
-  social: { transform: 'f_jpg,q_auto,w_1200,h_1200,c_pad,b_white', width: 1200, height: 1200 },
+  social: { transform: framed(1200, 'f_jpg'), width: 1200, height: 1200 },
 } as const
 
 export type ImagePreset = keyof typeof IMAGE_PRESETS
@@ -171,6 +181,20 @@ const usedSuffix = (product: StorefrontProduct, suffix: string): string =>
   product.condition === 'used' && !/\bused\b/i.test(product.name) ? suffix : ''
 
 export const hasPrice = (product: StorefrontProduct): boolean => Number(product.sellingPrice) > 0
+
+/** The review score, or null when the product has no reviews to show. */
+export const productRating = (product: StorefrontProduct): { average: number; count: number } | null => {
+  const average = Number(product.ratingAverage)
+  const count = Number(product.ratingCount)
+  return count > 0 && average > 0 ? { average: Math.min(5, average), count } : null
+}
+
+/** What the current price saves against the previous one, or null when it saves nothing. */
+export const productSaving = (product: StorefrontProduct): { previous: number; amount: number } | null => {
+  const previous = Number(product.previousPrice)
+  const current = Number(product.sellingPrice)
+  return hasPrice(product) && previous > current ? { previous, amount: previous - current } : null
+}
 
 /**
  * Whether `desc` is a description a shopper could use. Much of the catalogue
@@ -243,6 +267,10 @@ export const productMetaDescription = (product: StorefrontProduct): string => {
     : `${lead} Sold by ${SITE.name} in ${SITE.locality}, currently out of stock.${price}`
 }
 
+/** Every photograph of a product, main one first, without repeats. */
+export const productImages = (product: StorefrontProduct): string[] =>
+  [...new Set([product.imageUrl, ...(product.images ?? [])].filter((url): url is string => Boolean(url)))]
+
 export const productImageAlt = (product: StorefrontProduct): string =>
   `${productFullName(product)}${usedSuffix(product, ' (used)')}`
 
@@ -251,7 +279,8 @@ export const schemaAvailability = (product: StorefrontProduct): string =>
 
 export const productJsonLd = (product: StorefrontProduct, siteUrl: string, apiBase: string) => {
   const url = absoluteUrl(siteUrl, productPath(product))
-  const image = resolveImage(product.imageUrl, 'social', apiBase)
+  const images = productImages(product).map(image => resolveImage(image, 'social', apiBase))
+  const rating = productRating(product)
 
   return {
     '@context': 'https://schema.org',
@@ -259,11 +288,15 @@ export const productJsonLd = (product: StorefrontProduct, siteUrl: string, apiBa
     name: productFullName(product),
     description: productDescription(product),
     url,
-    ...(image ? { image: [image] } : {}),
+    ...(images.length ? { image: images } : {}),
     ...(product.code ? { sku: product.code } : {}),
     ...(product.model ? { model: squash(product.model) } : {}),
     ...(product.brand ? { brand: { '@type': 'Brand', name: squash(product.brand.name) } } : {}),
     ...(product.category ? { category: categoryLabel(product.category) } : {}),
+    // Only ratings from real customers are declared to search engines.
+    ...(rating && !product.sampleMerchandising
+      ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: rating.average, reviewCount: rating.count, bestRating: 5, worstRating: 1 } }
+      : {}),
     // An offer without a price is invalid, so a product with no active price
     // is published as a plain Product until one is set.
     ...(hasPrice(product)

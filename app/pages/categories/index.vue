@@ -14,7 +14,11 @@ const siteUrl = useSiteUrl()
 
 // Categories come from the products themselves, so only categories that
 // actually contain something are listed and linked.
-const categories = await useCatalogue('categories-index', all => collectCategories(all))
+const categories = await useCatalogue('categories-index', all => collectCategories(all).map(group => ({
+  ...group,
+  // Pictured by one of its own products.
+  cover: all.find(p => p.category?.id === group.id && p.imageUrl)?.imageUrl ?? null
+})))
 
 const crumbs = [
   { name: 'Home', path: '/' },

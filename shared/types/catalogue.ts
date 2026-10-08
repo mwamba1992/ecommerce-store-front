@@ -20,10 +20,20 @@ export interface StorefrontProduct {
   totalStock: number
 
   updatedAt?: string | null
+  /** Extra photographs, in display order. `imageUrl` is always the first. */
+  images?: string[] | null
   seoTitle?: string | null
   metaDescription?: string | null
   shortDescription?: string | null
   model?: string | null
+
+  /** Customer reviews. Shown only when there is at least one. */
+  ratingAverage?: number | null
+  ratingCount?: number | null
+  /** The price this product was sold at before the current one, if it was higher. */
+  previousPrice?: number | null
+  /** Set on design-preview data so sample ratings are never published as real ones. */
+  sampleMerchandising?: boolean
 }
 
 /** A category or brand, derived from the products that belong to it. */

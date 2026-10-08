@@ -1,155 +1,75 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
-    <!-- Page Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl sm:text-4xl font-black text-gray-900 mb-2">
-        Shopping <span class="text-yellow-500">Cart</span>
-      </h1>
-      <p class="text-gray-600">Review your items before checkout</p>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <h1 class="title text-4xl sm:text-5xl mb-6">
+      Your cart <span v-if="cartStore.totalItems" class="text-gray-400 font-medium text-2xl">({{ cartStore.totalItems }})</span>
+    </h1>
+
+    <!-- Empty -->
+    <div v-if="cartStore.items.length === 0" class="card p-10 sm:p-14 text-center">
+      <h2 class="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h2>
+      <p class="text-gray-600 mb-6">Find something you like and it will show up here.</p>
+      <NuxtLink to="/products" class="btn-primary">Browse products</NuxtLink>
     </div>
 
-    <!-- Empty Cart -->
-    <div v-if="cartStore.items.length === 0" class="text-center py-20">
-      <div class="max-w-md mx-auto">
-        <svg class="w-32 h-32 mx-auto text-gray-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-        <h2 class="text-2xl font-bold text-gray-900 mb-3">Your Cart is Empty</h2>
-        <p class="text-gray-600 mb-8">Start shopping to add items to your cart</p>
-        <NuxtLink to="/products" class="inline-flex items-center justify-center px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Continue Shopping
-        </NuxtLink>
-      </div>
-    </div>
-
-    <!-- Cart Items -->
-    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-      <!-- Cart Items List -->
-      <div class="lg:col-span-2 space-y-4">
-        <div
-          v-for="item in cartStore.items"
-          :key="item.id"
-          class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300"
-        >
-          <div class="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <!-- Product Image -->
-            <div class="flex-shrink-0 w-full sm:w-24 h-32 sm:h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden">
-              <img
-                v-if="item.imageUrl"
-                :src="getImageUrl(item.imageUrl)"
-                :alt="item.name"
-                class="w-full h-full object-contain p-3"
-              />
-              <div v-else class="w-full h-full flex items-center justify-center">
-                <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-
-            <!-- Product Details -->
-            <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-bold text-gray-900 mb-1">{{ item.name }}</h3>
-              <p v-if="item.code" class="text-xs font-mono text-gray-500 mb-2">SKU: {{ item.code }}</p>
-              <p class="text-xl font-black text-gray-900">
-                TZS {{ formatPrice(item.price) }}
-              </p>
-            </div>
-
-            <!-- Quantity Controls & Actions -->
-            <div class="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
-              <!-- Quantity Controls -->
-              <div class="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
-                <button
-                  @click="cartStore.updateQuantity(item.id, item.quantity - 1)"
-                  class="w-8 h-8 rounded-md bg-gray-900 hover:bg-yellow-400 text-white hover:text-black flex items-center justify-center transition-all duration-300 font-bold"
-                >
-                  −
-                </button>
-                <span class="text-lg font-bold w-10 text-center">{{ item.quantity }}</span>
-                <button
-                  @click="cartStore.updateQuantity(item.id, item.quantity + 1)"
-                  class="w-8 h-8 rounded-md bg-gray-900 hover:bg-yellow-400 text-white hover:text-black flex items-center justify-center transition-all duration-300 font-bold"
-                >
-                  +
-                </button>
-              </div>
-
-              <!-- Subtotal & Remove -->
-              <div class="flex items-center gap-3">
-                <div class="text-right">
-                  <p class="text-xs text-gray-500">Subtotal</p>
-                  <p class="text-lg font-black text-gray-900">
-                    TZS {{ formatPrice(item.price * item.quantity) }}
-                  </p>
-                </div>
-
-                <!-- Remove Button -->
-                <button
-                  @click="cartStore.removeFromCart(item.id)"
-                  class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Remove item"
-                >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Order Summary -->
-      <div class="lg:col-span-1">
-        <div class="bg-white rounded-xl shadow-lg border-2 border-yellow-400 p-6 sticky top-20">
-          <h2 class="text-2xl font-black text-gray-900 mb-6">Order Summary</h2>
-
-          <div class="space-y-3 mb-6">
-            <div class="flex justify-between text-gray-700">
-              <span class="font-medium">Subtotal ({{ cartStore.totalItems }} items)</span>
-              <span class="font-bold">TZS {{ formatPrice(cartStore.totalPrice) }}</span>
-            </div>
-
-            <div class="flex justify-between text-gray-700">
-              <span class="font-medium">Shipping</span>
-              <span class="font-bold text-green-600">FREE</span>
-            </div>
-
-            <div class="border-t-2 border-gray-200 pt-4 flex justify-between text-xl font-black text-gray-900">
-              <span>Total</span>
-              <span class="text-yellow-600">TZS {{ formatPrice(cartStore.totalPrice) }}</span>
-            </div>
-          </div>
-
-          <button
-            @click="proceedToCheckout"
-            class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl mb-4"
-          >
-            Proceed to Checkout
-          </button>
-
-          <NuxtLink
-            to="/products"
-            class="flex items-center justify-center text-gray-700 hover:text-yellow-600 font-bold transition-colors py-2"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Continue Shopping
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+      <!-- Items -->
+      <ul class="lg:col-span-2 card divide-y divide-gray-100">
+        <li v-for="item in cartStore.items" :key="item.id" class="p-4 sm:p-5 flex gap-4">
+          <NuxtLink :to="`/products/${item.id}`" class="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-100" :style="{ backgroundColor: item.imageUrl ? '#fff' : tintFor(item.id) }">
+            <img v-if="item.imageUrl" :src="getImageUrl(item.imageUrl)" :alt="item.name" class="w-full h-full object-contain p-1.5" />
+            <span v-else class="text-2xl font-semibold text-gray-900/25" aria-hidden="true">{{ initialOf(item.name) }}</span>
           </NuxtLink>
 
-          <button
-            @click="clearCart"
-            class="w-full mt-4 text-center text-red-600 hover:text-red-700 hover:bg-red-50 font-medium text-sm py-2 rounded-lg transition-colors"
-          >
-            Clear Cart
-          </button>
-        </div>
-      </div>
+          <div class="flex-1 min-w-0 flex flex-col">
+            <div class="flex justify-between gap-3">
+              <NuxtLink :to="`/products/${item.id}`" class="font-medium text-gray-900 leading-snug hover:underline line-clamp-2">{{ item.name }}</NuxtLink>
+              <p class="font-semibold text-gray-900 whitespace-nowrap">TZS {{ formatPrice(item.price * item.quantity) }}</p>
+            </div>
+            <p v-if="item.quantity > 1" class="text-xs text-gray-500 mt-0.5">TZS {{ formatPrice(item.price) }} each</p>
+
+            <div class="mt-auto pt-3 flex items-center justify-between">
+              <div class="inline-flex items-center rounded-full border border-gray-200" role="group" :aria-label="`Quantity of ${item.name}`">
+                <button type="button" @click="cartStore.updateQuantity(item.id, item.quantity - 1)" class="w-10 h-10 flex items-center justify-center text-gray-700" aria-label="Decrease quantity">−</button>
+                <span class="w-7 text-center text-sm font-semibold">{{ item.quantity }}</span>
+                <button type="button" @click="cartStore.updateQuantity(item.id, item.quantity + 1)" class="w-10 h-10 flex items-center justify-center text-gray-700" aria-label="Increase quantity">+</button>
+              </div>
+              <button type="button" @click="cartStore.removeFromCart(item.id)" class="text-sm font-semibold text-gray-500 hover:text-red-600 underline">Remove</button>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Summary -->
+      <aside class="card p-6 lg:sticky lg:top-36">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Order summary</h2>
+
+        <dl class="space-y-3 text-sm">
+          <div class="flex justify-between text-gray-700">
+            <dt>Subtotal ({{ cartStore.totalItems }} {{ cartStore.totalItems === 1 ? 'item' : 'items' }})</dt>
+            <dd class="font-semibold text-gray-900">TZS {{ formatPrice(cartStore.totalPrice) }}</dd>
+          </div>
+          <div class="flex justify-between gap-4 text-gray-700">
+            <dt>Delivery</dt>
+            <dd class="text-right text-gray-500">Confirmed before dispatch</dd>
+          </div>
+          <div class="flex justify-between border-t border-gray-100 pt-4 text-base font-semibold text-gray-900">
+            <dt>Total</dt>
+            <dd>TZS {{ formatPrice(cartStore.totalPrice) }}</dd>
+          </div>
+        </dl>
+
+        <button type="button" @click="proceedToCheckout" class="btn-primary w-full mt-6">Checkout</button>
+        <NuxtLink to="/products" class="block text-center text-sm font-semibold text-gray-600 hover:text-gray-900 underline mt-4">Continue shopping</NuxtLink>
+
+        <ul class="mt-6 pt-5 border-t border-gray-100 space-y-2.5 text-sm text-gray-600">
+          <li v-for="line in reassurance" :key="line" class="flex gap-2.5">
+            <svg class="w-4 h-4 mt-0.5 text-green-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+            {{ line }}
+          </li>
+        </ul>
+
+        <button type="button" @click="clearCart" class="block mx-auto mt-5 text-xs text-gray-400 hover:text-red-600 underline">Clear cart</button>
+      </aside>
     </div>
   </div>
 </template>
@@ -161,6 +81,13 @@ const cartStore = useCartStore()
 const { formatPrice, productImage } = useFormat()
 
 const getImageUrl = (imageUrl) => productImage(imageUrl, 'small')
+
+// Stated on the help, shipping and returns pages.
+const reassurance = [
+  'Pay on delivery, or by mobile money',
+  'Same or next day delivery in Dar es Salaam',
+  '7-day returns on unused items'
+]
 
 const proceedToCheckout = () => {
   navigateTo('/checkout')

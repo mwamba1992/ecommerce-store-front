@@ -16,3 +16,26 @@ export const fetchCatalogue = async (event: H3Event): Promise<StorefrontProduct[
   if (!Array.isArray(products)) throw new Error('Catalogue response was not a list')
   return products
 }
+
+// The copy handed to browsers: refreshed at most once a minute, and the last
+// good one is kept serving if the API fails.
+const FRESH_FOR_MS = 60_000
+let cached: { at: number; products: StorefrontProduct[] } | null = null
+let inFlight: Promise<StorefrontProduct[]> | null = null
+
+export const getCatalogueCached = (event: H3Event): Promise<StorefrontProduct[]> => {
+  if (cached && Date.now() - cached.at < FRESH_FOR_MS) return Promise.resolve(cached.products)
+
+  inFlight ??= fetchCatalogue(event)
+    .then((products) => {
+      cached = { at: Date.now(), products }
+      return products
+    })
+    .catch((error) => {
+      if (cached) return cached.products
+      throw error
+    })
+    .finally(() => { inFlight = null })
+
+  return inFlight
+}
